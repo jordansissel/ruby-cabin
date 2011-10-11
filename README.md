@@ -23,7 +23,7 @@ event.
 Lots of this data finds its way into your logs (rather than your
 metrics/graphing systems).
 
-How about we skip the level 70 Regular Expressions skipp requirement? Log
+How about we skip the level 70 Regular Expression skill requirement? Log
 structured data, yo. Pretty sure every language can parse JSON. Don't like
 JSON? That's fine, JSON is just a serialization- a data representation - there
 are plenty of choices...
