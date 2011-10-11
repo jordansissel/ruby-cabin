@@ -10,6 +10,12 @@ I want:
 * recording metrics
 * track latencies/etc
 
+log4j has the context bits (see
+[MDC](http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/MDC.html)
+and
+[NDC](http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/NDC.html)).
+Ruby's Logger has almost none of this.
+
 # Why?
 
 Logging plain-text strings is just plain shit. You need to be a regexp ninja
