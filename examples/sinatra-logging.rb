@@ -1,11 +1,11 @@
 require "rubygems"
 require "sinatra"
 $: << "./lib"
-require "logging"
+require "cabin"
 require "logger"
 
-$logger = Logging::Channel.new
-$logger.subscribe(Logger.new(STDOUT))
+$logger = Cabin::Channel.new
+$logger.subscribe(Cabin.new(STDOUT))
 
 def serve_it_up(arg)
   $logger.info("Serving it up")

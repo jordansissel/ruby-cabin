@@ -1,9 +1,9 @@
-require "logging"
-require "logging/outputs/stdlib-logger"
+require "rubygems"
+require "cabin"
 require "logger"
 
 # Logging::... is something I'm implemented and experimenting with.
-@logger = Logging::Channel.new
+@logger = Cabin::Channel.new
 
 # A logging channel can have any number of subscribers.
 # Any subscriber is simply expected to respond to '<<' and take a single
