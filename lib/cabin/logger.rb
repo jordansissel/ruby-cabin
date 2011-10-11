@@ -1,6 +1,6 @@
-require "logging/namespace"
+require "cabin/namespace"
 
-module Logging::Logger
+module Cabin::Logger
   attr_accessor :level
   LEVELS = {
     :fatal => 0,
@@ -26,4 +26,4 @@ module Logging::Logger
       publish(data)
     end
   end # end defining level-based log methods
-end # module Logging::Logger
+end # module Cabin::Logger

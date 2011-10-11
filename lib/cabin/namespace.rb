@@ -1,3 +1,3 @@
-module Logging
+module Cabin
   module Outputs; end
 end

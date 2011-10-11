@@ -3,11 +3,11 @@ $: << File.join(File.dirname(__FILE__), "..", "lib")
 
 require "rubygems"
 require "minitest-patch"
-require "logging"
+require "cabin"
 require "stringio"
 require "minitest/autorun" if __FILE__ == $0
 
-describe Logging::Channel do
+describe Cabin::Channel do
   class Receiver
     attr_accessor :data
 
@@ -23,7 +23,7 @@ describe Logging::Channel do
   end # class Receiver
 
   before do
-    @logger = Logging::Channel.new
+    @logger = Cabin::Channel.new
     @target = Receiver.new
     @logger.subscribe(@target)
   end

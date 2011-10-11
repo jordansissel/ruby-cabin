@@ -1,8 +1,9 @@
-require "logging/logger"
-require "logging/namespace"
-require "logging/timer"
-require "logging/context"
-require "logging/outputs/stdlib-logger"
+require "cabin/logger"
+require "cabin/namespace"
+require "cabin/timer"
+require "cabin/context"
+require "cabin/outputs/stdlib-logger"
+require "logger"
 
 # A wonderful channel for logging.
 #
@@ -16,9 +17,9 @@ require "logging/outputs/stdlib-logger"
 # It additionally allows you to store arbitrary pieces of data in it like a
 # hash, so your call stack can do be this:
 #
-#     @logger = Logging::Channel.new
-#     rubylog = Logger.new(STDOUT)
-#     @logger.subscribe(Logging::Outputs::StdlibLogger(rubylog))
+#     @logger = Cabin::Channel.new
+#     rubylog = Logger.new(STDOUT) # ruby's stlib logger
+#     @logger.subscribe(rubylog)
 #
 #     def foo(val)
 #       context = @logger.context()
@@ -41,8 +42,8 @@ require "logging/outputs/stdlib-logger"
 #     I, [2011-10-11T01:00:57.993200 #1209]  INFO -- : {:timestamp=>"2011-10-11T01:00:57.992353-0700", :foo=>"Hello", :example=>100, :message=>"Fizzle", :level=>:info}
 #     I, [2011-10-11T01:00:57.993575 #1209]  INFO -- : {:timestamp=>"2011-10-11T01:00:57.993517-0700", :message=>"Done in foo", :level=>:info}
 #
-class Logging::Channel
-  include Logging::Logger
+class Cabin::Channel
+  include Cabin::Logger
 
   # Create a new logging channel.
   # The default log level is 'info'
@@ -57,8 +58,8 @@ class Logging::Channel
   public
   def subscribe(output)
     # Wrap ruby stdlib Logger if given.
-    if output.is_a?(Logger)
-      output = Logging::Outputs::StdlibLogger.new(output)
+    if output.is_a?(::Logger)
+      output = Cabin::Outputs::StdlibLogger.new(output)
     end
     @outputs << output
     # TODO(sissel): Return a method or object that allows you to easily
@@ -109,9 +110,9 @@ class Logging::Channel
   end # def publish
 
   # Start timing something.
-  # Returns an instance of Logging::Timer bound to this Logging::Channel.
+  # Returns an instance of Cabin::Timer bound to this Cabin::Channel.
   # To stop the timer and immediately emit the result to this channel, invoke
-  # the Logging::Timer#stop method.
+  # the Cabin::Timer#stop method.
   public
   def time(data, &block)
     # TODO(sissel): need to refactor string->hash shoving.
@@ -119,7 +120,7 @@ class Logging::Channel
       data = { :message => data }
     end
 
-    timer = Logging::Timer.new do |duration|
+    timer = Cabin::Timer.new do |duration|
       # TODO(sissel): Document this field
       data[:duration] = duration
       publish(data)
@@ -135,7 +136,7 @@ class Logging::Channel
 
   public
   def context
-    ctx = Logging::Context.new(self)
+    ctx = Cabin::Context.new(self)
     return ctx
   end # def context
-end # class Logging
+end # class Cabin::Channel

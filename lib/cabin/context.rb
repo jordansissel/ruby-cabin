@@ -1,4 +1,4 @@
-require "logging/namespace"
+require "cabin/namespace"
 
 # Logging context exists to make it easy to add and later undo any changes made
 # to the context data associated with a given Logging::Channel
@@ -11,13 +11,7 @@ require "logging/namespace"
 #     context.clear
 #     channel.info("Sample log 2") # context cleared, key "foo" removed.
 #
-#
-# This is most useful for achieving call-stack-based context. A Sinatra example:
-#
-#     get "/admin/:something" do
-#
-#     end
-class Logging::Context
+class Cabin::Context
   def initialize(channel)
     @changes = []
     @channel = channel
@@ -48,4 +42,4 @@ class Logging::Context
       end
     end
   end # def clear
-end # class Logging::Context
+end # class Cabin::Context
