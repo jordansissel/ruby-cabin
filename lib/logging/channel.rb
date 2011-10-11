@@ -113,7 +113,7 @@ class Logging::Channel
   # To stop the timer and immediately emit the result to this channel, invoke
   # the Logging::Timer#stop method.
   public
-  def time(data)
+  def time(data, &block)
     # TODO(sissel): need to refactor string->hash shoving.
     if data.is_a?(String)
       data = { :message => data }
@@ -124,7 +124,13 @@ class Logging::Channel
       data[:duration] = duration
       publish(data)
     end
-    return timer
+
+    if block_given?
+      block.call
+      return timer.stop
+    else
+      return timer
+    end
   end # def time
 
   public
