@@ -1,6 +1,6 @@
-Logging kind of sucks.
+# Logging kind of sucks.
 
-Goals here:
+I want:
 
 * allow easy context attaching (see structured logging)
 * log structured data
@@ -10,7 +10,7 @@ Goals here:
 * recording metrics
 * track latencies/etc
 
-Overview:
+# Why?
 
 Logging plain-text strings is just plain shit. You need to be a regexp ninja
 to make any kind of aggregated sense out of anything more than a single log
@@ -63,3 +63,22 @@ And output in any structured data format, like json:
     }
 
 Log structured stuff and you can trivially do some nice analytics and searching on your logs.
+
+# Latency matters.
+
+Want to time something and log it?
+
+    n = 30
+    logger[:input] = n
+    logger.time("fibonacci duration") do
+      fib(30)
+    end
+
+Output in JSON format:
+
+    {
+      "timestamp":"2011-10-11T02:17:12.447487-0700",
+      "input":30,
+      "message":"fibonacci duration",
+      "duration":1.903017632
+    }
