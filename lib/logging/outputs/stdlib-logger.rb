@@ -8,11 +8,7 @@ class Logging::Outputs::StdlibLogger
     @logger = logger
   end # def initialize
 
-  public
-  def subscribe(logging)
-    logging.subscribe(self)
-  end # def subscribe
-
+  # Receive an event
   public
   def <<(data)
     method = data[:level] || "info"

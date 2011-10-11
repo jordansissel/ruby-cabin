@@ -7,7 +7,7 @@ module Logging::Logger
     :error => 1,
     :warn => 2,
     :info => 3,
-    :debug => 4,
+    :debug => 4
   }
 
   # Define the usual log methods: info, fatal, etc.
@@ -17,7 +17,11 @@ module Logging::Logger
     # def info, def warn, etc...
     define_method(level) do |message, data={}|
       next unless LEVELS[@level] >= LEVELS[level]
-      data[:message] = message
+      if message.is_a?(Hash)
+        data.merge!(message)
+      else
+        data[:message] = message
+      end
       data[:level] = level
       publish(data)
     end

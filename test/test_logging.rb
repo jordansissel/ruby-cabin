@@ -51,6 +51,33 @@ describe Logging::Channel do
     assert(event[:duration].is_a?(Numeric))
   end
 
+  test "double subscription" do
+    @logger.subscribe(@target)
+    @logger.publish("Hello world")
+    assert_equal(2, @target.data.length)
+    assert_equal("Hello world", @target.data[0][:message])
+    assert_equal("Hello world", @target.data[1][:message])
+  end 
+
+  test "context values" do
+    context = @logger.context
+    context["foo"] = "hello"
+    @logger.publish("testing")
+    assert_equal(1, @target.data.length)
+    assert_equal("hello", @target.data[0]["foo"])
+    assert_equal("testing", @target.data[0][:message])
+  end
+
+  test "context values clear properly" do
+    context = @logger.context
+    context["foo"] = "hello"
+    context.clear
+    @logger.publish("testing")
+    assert_equal(1, @target.data.length)
+    assert(!@target.data[0].has_key?("foo"))
+    assert_equal("testing", @target.data[0][:message])
+  end
+
   %w(fatal error warn info debug).each do |level|
     level = level.to_sym
     test "standard use case, '#{level}' logging when enabled" do
