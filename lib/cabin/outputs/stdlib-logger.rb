@@ -14,7 +14,10 @@ class Cabin::Outputs::StdlibLogger
   public
   def <<(data)
     method = data[:level] || "info"
+
+    message = "#{data[:message]} #{data.to_json}"
+
     # This will call @logger.info(data) or something similar.
-    @logger.send(method, data.to_json)
+    @logger.send(method, message)
   end # def <<
 end # class Cabin::Outputs::StdlibLogger
