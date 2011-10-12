@@ -88,3 +88,22 @@ Output in JSON format:
       "message":"fibonacci duration",
       "duration":1.903017632
     }
+
+# Metrics like counters?
+
+    metrics = Cabin::Channel.new
+    logger = Cabin::Channel.new
+
+    # Pretend you can subscribe rrdtool, graphite, or statsd to the 'metrics'
+    # channel. Pretend the 'logger' channel has been subscribed to something
+    # that writes to stdout or disk.
+
+    begin
+      logger.time("Handling request") do
+        handle_request
+      end
+      metrics[:hits] += 1
+    rescue => e
+      metrics[:errors] += 1
+      logger.error("An error occurred", :exception => e, :backtrace => e.backtrace)
+    end
