@@ -1,0 +1,4 @@
+v0.1.2 (2011-10-12)
+  - Added file+line+method context if the logger level is debug
+
+!!date +\%Y-\%m-\%d
