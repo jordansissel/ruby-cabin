@@ -1,4 +1,5 @@
 require "cabin/namespace"
+require "ap"
 
 # This module implements methods that act somewhat like Ruby's Logger class
 # It is included in Cabin::Channel
@@ -30,6 +31,7 @@ module Cabin::Logger
     # def info?, def warn? ...
     # these methods return true if the loglevel allows that level of log.
     define_method(predicate) do 
+      @level ||= :info
       return LEVELS[@level] >= LEVELS[level]
     end # def info?, def warn? ...
   end # end defining level-based log methods
