@@ -8,6 +8,11 @@ require "stringio"
 require "minitest/autorun" if __FILE__ == $0
 
 describe Cabin::Channel do
+
+  # Cabin::Channel is a subscription thing, so implement
+  # a simple receiver that just stores events in an array
+  # for later access - this lets us see exactly what is
+  # logged, in order.
   class Receiver
     attr_accessor :data
 
@@ -84,6 +89,8 @@ describe Cabin::Channel do
       @logger.level = level
       @logger.send(level, "Hello world")
       event = @target.data[0]
+      assert(@logger.send("#{level}?"),
+             "At level #{level}, Channel##{level}? should return true.")
       assert_equal("Hello world", event[:message])
       assert_equal(level, event[:level])
     end
@@ -98,4 +105,22 @@ describe Cabin::Channel do
       assert_equal(0, @target.data.length)
     end
   end
-end
+
+  test "extra debugging data" do 
+    @logger.level = :debug
+    @logger.info("Hello world")
+    event = @target.data[0]
+    assert(event.include?(:file), "At debug level, there should be a :file attribute")
+    assert(event.include?(:line), "At debug level, there should be a :line attribute")
+    assert(event.include?(:method), "At debug level, there should be a :method attribute")
+  end
+
+  test "extra debugging data absent if log level is not debug" do 
+    @logger.level = :info
+    @logger.info("Hello world")
+    event = @target.data[0]
+    assert(!event.include?(:file), "At non-debug level, there should not be a :file attribute")
+    assert(!event.include?(:line), "At non-debug level, there should not be a :line attribute")
+    assert(!event.include?(:method), "At non-debug level, there should not be a :method attribute")
+  end
+end # describe Cabin::Channel do
