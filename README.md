@@ -42,6 +42,7 @@ event.
 * How many customers signed up yesterday?
 * What is the average SQL query latency in the past hour?
 * How many unique users are visiting the site?
+* What's in my logs that matters to my goals? (Business or otherwise?)
 
 Lots of this data finds its way into your logs (rather than your
 metrics/graphing systems).
