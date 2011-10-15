@@ -2,25 +2,25 @@
 
 I want:
 
-* allow easy context attaching (see structured logging)
-* log structured data. 
+## Context and Structured Data
 
 Logging with printf makes it hard to read later. Why write code that's easy to maintain, but not write logs that are the same? Structured data means you don't need crazy regular expression skills to make sense of logs.
 
-* should allow writing to N outputs.
+## Output logs to multiple targets
 
- Why not log to a file, a database, and a websocket at the same time? What if you could log to any output logstash supported right from your application?
+Why not log to a file, a database, and a websocket at the same time? What if you could log to any output logstash supported right from your application?
 
-* log levels
+## Log levels
 
 What did the application programmer think of the importance and meaning of a log message?
 
-* logger singleton-ish-factory-thin similar to log4j's getLogger(object)
+Is the usual list of fatal, error, warning, info, and debug sufficient?
+
+## Easy shared logging configuration through an application
 
 It should be easy for your entire application (and all libraries you use) to use the same logging configuration.
 
-* recording metrics
-* track latencies/etc
+## API that encourages tracking metrics, latencies, etc
 
 Your applications and libraries would be vastly easier to debug, scale, and maintain if they exposed metrics about ongoing behaviors. Keep a count of HTTP hits by response code, count errors, time latencies, etc.
 
