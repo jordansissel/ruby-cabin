@@ -1,0 +1,3 @@
+require "minitest/autorun"
+test_dir = File.join(File.dirname(__FILE__), "..", "test")
+load File.join(test_dir, "test_logging.rb")
