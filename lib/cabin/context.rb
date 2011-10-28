@@ -11,6 +11,11 @@ require "cabin/namespace"
 #     context.clear
 #     channel.info("Sample log 2") # context cleared, key "foo" removed.
 #
+# Essentially, a Cabin::Context acts as a transactional proxy on top of a
+# Cabin::Channel. Any changes you make in a context are passed through to
+# the channel while keeping an ordered record of the changes made so
+# you can unroll those changes when the context is no longer needed..
+# 
 class Cabin::Context
   def initialize(channel)
     @changes = []
