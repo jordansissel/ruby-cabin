@@ -1,5 +1,4 @@
 require "cabin/namespace"
-require "ap"
 
 # This module implements methods that act somewhat like Ruby's Logger class
 # It is included in Cabin::Channel
@@ -19,11 +18,21 @@ module Cabin::Logger
 
   # Define the usual log methods: info, fatal, etc.
   # Each level-based method accepts both a message and a hash data.
+  #
+  # This will define methods such as 'fatal' and 'fatal?' for each
+  # of: fatal, error, warn, info, debug
+  #
+  # The first method type (ie Cabin::Channel#fatal) is what logs, and it takes a
+  # message and an optional Hash with context.
+  #
+  # The second method type (ie; Cabin::Channel#fatal?) returns true if
+  # fatal logs are being emitted, false otherwise.
   %w(fatal error warn info debug).each do |level|
     level = level.to_sym
     predicate = "#{level}?".to_sym
 
     # def info, def warn, etc...
+
     define_method(level) do |message, data={}|
       log(level, message, data) if send(predicate)
     end
@@ -50,8 +59,10 @@ module Cabin::Logger
 
     data[:level] = level
     publish(data)
-  end # def info, def warn ...
+  end # def log
 
+  # This method is used to pull useful information about the caller
+  # of the logging method such as the caller's file, method, and line number.
   private
   def debugharder(callstack, data)
     path, line, method = callstack[1].split(/(?::in `|:|')/)
@@ -63,7 +74,6 @@ module Cabin::Logger
       # We get here if the path is not in $:
       file = path
     end
-    who = "#{file}:#{line}##{method}"
     
     data[:file] = file
     data[:line] = line
