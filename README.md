@@ -33,7 +33,24 @@ and
 
 Ruby's Logger has almost none of this. Same with Python's standard 'logging' module. Node doesn't really have any logging tools. Java has many, including log4j mentioned above, and misses much of the above.
 
-# Why?
+# Broaden Your Views
+
+Many logging tools are myopic - they only see one use for logs. Loggers are for
+debugging and troubleshooting. Some are for logging usage for billing and
+accounting. Some logs are for recording transactions for rollback or replay.
+
+Ultimately all of these things are, roughly, a timestamp and some data. Debug
+logs will have messages and context. Billing logs will have customer info and
+usage metrics. Transaction logs will include operations performed.
+
+For troubleshooting-style logs it makes sense to use a "level" concept where
+some logs have a higher degree of importance or different meaning. In billing
+logs, what is "info" vs "error" ? Would you even have such a thing?
+
+We can do better than requiring three different kinds of log libraries and
+tools for each of these three problems.
+
+# Why experiment with this?
 
 Logging plain-text strings is just plain shit. You need to be a regexp ninja
 to make any kind of aggregated sense out of anything more than a single log
