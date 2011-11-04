@@ -1,4 +1,4 @@
-require "cabin/logger"
+require "cabin/mixins/logger"
 require "cabin/namespace"
 require "cabin/timer"
 require "cabin/context"
@@ -43,7 +43,7 @@ require "logger"
 #     I, [2011-10-11T01:00:57.993575 #1209]  INFO -- : {:timestamp=>"2011-10-11T01:00:57.993517-0700", :message=>"Done in foo", :level=>:info}
 #
 class Cabin::Channel
-  include Cabin::Logger
+  include Cabin::Mixins::Logger
 
   # Create a new logging channel.
   # The default log level is 'info'

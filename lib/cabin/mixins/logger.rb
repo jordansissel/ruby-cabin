@@ -2,7 +2,7 @@ require "cabin/namespace"
 
 # This module implements methods that act somewhat like Ruby's Logger class
 # It is included in Cabin::Channel
-module Cabin::Logger
+module Cabin::Mixins::Logger
   attr_accessor :level
   LEVELS = {
     :fatal => 0,
@@ -79,4 +79,4 @@ module Cabin::Logger
     data[:line] = line
     data[:method] = method
   end # def debugharder
-end # module Cabin::Logger
+end # module Cabin::Mixins::Logger
