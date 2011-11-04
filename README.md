@@ -35,9 +35,10 @@ Ruby's Logger has almost none of this. Same with Python's standard 'logging' mod
 
 # Broaden Your Views
 
-Many logging tools are myopic - they only see one use for logs. Loggers are for
-debugging and troubleshooting. Some are for logging usage for billing and
-accounting. Some logs are for recording transactions for rollback or replay.
+Many logging tools are myopic - they only see one use for logs. Some logging
+tools are for debugging and troubleshooting. Some are for logging usage for
+billing and accounting. Some logs are for recording transactions for rollback
+or replay.
 
 Ultimately all of these things are, roughly, a timestamp and some data. Debug
 logs will have messages and context. Billing logs will have customer info and
