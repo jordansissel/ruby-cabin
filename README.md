@@ -43,9 +43,9 @@ Ultimately all of these things are, roughly, a timestamp and some data. Debug
 logs will have messages and context. Billing logs will have customer info and
 usage metrics. Transaction logs will include operations performed.
 
-For troubleshooting-style logs it makes sense to use a "level" concept where
-some logs have a higher degree of importance or different meaning. In billing
-logs, what is "info" vs "error" ? Would you even have such a thing?
+For troubleshooting-style logs, it can make sense to use a "level" concept
+where some logs have a higher degree of importance or different meaning. In
+billing logs, what is "info" vs "fatal," and would you even have such a thing?
 
 We can do better than requiring three different kinds of log libraries and
 tools for each of these three problems.
