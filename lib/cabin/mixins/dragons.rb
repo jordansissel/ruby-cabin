@@ -6,7 +6,7 @@ require "cabin/namespace"
 # Plus, now you can 'include Dragons' in your logger, which means it
 # has +2 against Knights and a special fire breathing attack..
 module Cabin::Mixins::Dragons
-  orders = %w(lawful neutral chaotic)
+  orders = %w(lawful ambivalent chaotic)
   desires = %w(good neutral evil)
 
   orders.each do |order|
