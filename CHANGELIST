@@ -1,3 +1,6 @@
+v0.1.7 (2011-11-07)
+  - Add support for ruby 1.8
+
 v0.1.6 (2011-11-07)
   - Add 'Dragons' mixin for times when info/debug/fatal log levels don't cut it
     and you'd rather deal in D&D alignments instead.
