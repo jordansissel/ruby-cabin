@@ -23,7 +23,7 @@ class Cabin::Outputs::EmStdlibLogger
         @logger_queue.pop(&line_sender)
       end
     end
-    # Pop line off queue and send it to logger
+    # Pop line off queue and send it with logger
     @logger_queue.pop(&line_sender)
   end
 
