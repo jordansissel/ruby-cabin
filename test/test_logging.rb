@@ -123,4 +123,20 @@ describe Cabin::Channel do
     assert(!event.include?(:line), "At non-debug level, there should not be a :line attribute")
     assert(!event.include?(:method), "At non-debug level, there should not be a :method attribute")
   end
+
+  test "invalid arguments to logger.info raises ArgumentError" do
+    assert_raises(ArgumentError, "logger.info() should raise ArgumentError") do
+      @logger.info()
+    end
+
+    assert_raises(ArgumentError, "logger.info('foo', 'bar') should raise " \
+                  "ArgumentError because 'bar' is not a Hash.") do
+      @logger.info("foo", "bar")
+    end
+
+    assert_raises(ArgumentError, "logger.info('foo', { 'foo': 'bar' }, 'baz')" \
+                  "should raise ArgumentError for too many arguments") do
+      @logger.info("foo", { "foo" => "bar" }, "bar")
+    end
+  end
 end # describe Cabin::Channel do
