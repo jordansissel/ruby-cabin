@@ -5,7 +5,7 @@ require "cabin"
 require "logger"
 
 $logger = Cabin::Channel.new
-$logger.subscribe(Cabin.new(STDOUT))
+$logger.subscribe(Logger.new(STDOUT))
 
 def serve_it_up(arg)
   $logger.info("Serving it up")
