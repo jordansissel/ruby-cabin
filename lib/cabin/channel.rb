@@ -120,6 +120,8 @@ class Cabin::Channel
       data = { :message => data }
     end
 
+    data[:level] = @level
+
     timer = Cabin::Timer.new do |duration|
       # TODO(sissel): Document this field
       data[:duration] = duration
