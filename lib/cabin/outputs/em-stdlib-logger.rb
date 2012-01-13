@@ -6,7 +6,7 @@ require "eventmachine"
 # allows you to output to a normal ruby logger with Cabin. Since
 # Ruby's Logger has a love for strings alone, this wrapper will
 # convert the data/event to json before sending it to Logger.
-class Cabin::Outputs::EMStdlibLogger
+class Cabin::Outputs::EM::StdlibLogger
   public
   def initialize(logger)
     @logger_queue = EM::Queue.new
@@ -39,7 +39,7 @@ class Cabin::Outputs::EMStdlibLogger
       @logger_queue.push(line)
     else
       # This will call @logger.info(data) or something similar
-      @logger.send(method, message)
+      @logger.send(line[:method], line[:message])
     end
   end
 end
