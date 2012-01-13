@@ -1,4 +1,6 @@
 module Cabin
-  module Outputs; end
+  module Outputs
+    module EM; end
+  end
   module Mixins; end
 end
