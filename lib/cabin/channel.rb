@@ -55,6 +55,8 @@ class Cabin::Channel
   end # def initialize
 
   # Subscribe a new input
+  # New events will be sent to the subscriber using the '<<' method
+  #   foo << event
   public
   def subscribe(output)
     # Wrap ruby stdlib Logger if given.
