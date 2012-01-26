@@ -8,6 +8,7 @@ class Cabin::Outputs::StdlibLogger
   public
   def initialize(logger)
     @logger = logger
+    @logger.level = logger.class::DEBUG
   end # def initialize
 
   # Receive an event
@@ -17,6 +18,7 @@ class Cabin::Outputs::StdlibLogger
 
     message = "#{data[:message]} #{data.to_json}"
 
+    #p [@logger.level, logger.class::DEBUG]
     # This will call @logger.info(data) or something similar.
     @logger.send(method, message)
   end # def <<

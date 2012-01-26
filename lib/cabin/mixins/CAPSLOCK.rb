@@ -18,6 +18,7 @@ module Cabin::Mixins::CAPSLOCK
     debugharder(caller.collect { |c| c.upcase }, data) if @level == :debug
 
     data[:level] = level.upcase
+
     publish(data)
   end # def log
 end # module Cabin::Mixins::CAPSLOCK

@@ -13,7 +13,11 @@ module Cabin::Mixins::Logger
   }
 
   def level=(value)
-    @level = value.to_sym
+    if value.respond_to?(:downcase)
+      @level = value.downcase.to_sym
+    else
+      @level = value.to_sym
+    end
   end # def level
 
   # Define the usual log methods: info, fatal, etc.
