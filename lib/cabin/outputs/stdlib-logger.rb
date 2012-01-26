@@ -13,7 +13,7 @@ class Cabin::Outputs::StdlibLogger
   # Receive an event
   public
   def <<(data)
-    method = data[:level] || "info"
+    method = data[:level].downcase.to_sym || :info
 
     message = "#{data[:message]} #{data.to_json}"
 
