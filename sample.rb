@@ -23,5 +23,3 @@ logger.level = :debug
 
 logger.info("Hello")
 logger.warn("World")
-
-
