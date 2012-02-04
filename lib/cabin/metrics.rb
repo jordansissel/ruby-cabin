@@ -1,4 +1,7 @@
 require "cabin/namespace"
+require "cabin/metrics/gauge"
+require "cabin/metrics/meter"
+require "cabin/metrics/counter"
 
 # What type of metrics do we want?
 #
@@ -66,10 +69,11 @@ class Cabin::Metrics
   #public
   #def histogram(identifier)
     #@metrics[identifier] = Cabin::Metrics::Histogram.new
-  #end
+  #end # def histogram
   
   # iterate over each metric. yields identifer, metric
   def each(&block)
+    # delegate to the @metrics hash until we need something fancier
     @metrics.each(&block)
   end # def each
 end # class Cabin::Metrics

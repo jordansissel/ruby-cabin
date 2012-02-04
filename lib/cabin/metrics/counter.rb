@@ -13,24 +13,17 @@ class Cabin::Metrics::Counter
 
   # increment this counter
   def incr
-    @lock.synchronize do
-      @value += 1
-    end
+    @lock.synchronize { @value += 1 }
   end # def incr
 
   # decrement this counter
   def decr
-    @lock.synchronize do
-      @value -= 1
-    end
+    @lock.synchronize { @value -= 1 }
   end # def decr
 
   # Get the value of this metric.
   public
   def get
-    @lock.synchronize do
-      value = @value
-    end
-    return value
+    return @lock.synchronize { @value }
   end # def get
 end # class Cabin::Metrics::Counter

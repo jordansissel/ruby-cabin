@@ -3,5 +3,5 @@ module Cabin
     module EM; end
   end
   module Mixins; end
-  module Metrics; end
+  class Metrics; end
 end
