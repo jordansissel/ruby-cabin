@@ -13,30 +13,32 @@ require "cabin/namespace"
 #   - memory usage
 #   - count of active/in-flight actions/requests/calls/transactions
 #   - peer metrics (number of cluster members, etc)
+# ------------------------------------------------------------------
+# Reading what Coda Hale's "Metrics" stuff has, here's my summary:
+#   gauges (callback to return a number)
+#   counters (.inc and .dec methods)
+#   meters (.mark to track each 'hit')
+#     Also exposes 1, 5, 15 minute moving averages
+#   histograms: (.update(value) to record a new value)
+#     like meter, but takes values more than simply '1'
+#     as a result, exposes percentiles, median, etc.
+#   timers
+#     combination of meter + histogram
+#     meter for invocations, histogram for duration
+#
+# With the exception of gauges, all the other metrics are all active/pushed.
+# Gauges take callbacks, so their values are pulled, not pushed. The active
+# metrics can be represented as events since they the update occurs at the
+# time of the change.
+#
+# These active/push metrics can therefore be considered events.
+#
+# All metrics (active/passive) can be queried for 'current state', too,
+# making this suitable for serving to interested parties like monitoring
+# and management tools.
 class Cabin::Metrics
-  # Reading what Coda Hale's "Metrics" stuff has, here's my summary:
-  #   gauges (callback to return a number)
-  #   counters (.inc and .dec methods)
-  #   meters (.mark to track each 'hit')
-  #     Also exposes 1, 5, 15 minute moving averages
-  #   histograms: (.update(value) to record a new value)
-  #     like meter, but takes values more than simply '1'
-  #     as a result, exposes percentiles, median, etc.
-  #   timers
-  #     combination of meter + histogram
-  #     meter for invocations, histogram for duration
-  #
-  # With the exception of gauges, all the other metrics are all active/pushed.
-  # Gauges take callbacks, so their values are pulled, not pushed. The active
-  # metrics can be represented as events since they the update occurs at the
-  # time of the change.
-  #
-  # These active/push metrics can therefore be considered events.
-  #
-  # All metrics (active/passive) can be queried for 'current state', too,
-  # making this suitable for serving to interested parties like monitoring
-  # and management tools.
-  
+  include Enumerable
+
   public
   def initialize
     @metrics = {}
@@ -60,4 +62,14 @@ class Cabin::Metrics
   def meter(identifier)
     @metrics[identifier] = Cabin::Metrics::Meter.new
   end # def meter
+
+  #public
+  #def histogram(identifier)
+    #@metrics[identifier] = Cabin::Metrics::Histogram.new
+  #end
+  
+  # iterate over each metric. yields identifer, metric
+  def each(&block)
+    @metrics.each(&block)
+  end # def each
 end # class Cabin::Metrics
