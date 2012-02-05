@@ -9,7 +9,7 @@ class Cabin::Metrics::Gauge
 
   # Get the value of this metric.
   public
-  def get
-    @block.call
-  end # def get
+  def value
+    return @block.call
+  end # def value
 end # class Cabin::Metrics::Gauge

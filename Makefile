@@ -1,11 +1,22 @@
+DIRS=lib/ test/
+
 .PHONY: test
 test:
-	ruby test/all.rb
+	sh notify-failure.sh ruby test/all.rb
 
 .PHONY: testloop
 testloop:
-	# TODO(sissel): use inotifywait?
-	while true; do $(MAKE) test; sleep 1 ;done
+	while true; do \
+		$(MAKE) wait-for-changes test; \
+	done
+
+.PHONY: serve-coverage
+serve-coverage:
+	cd coverage; python -mSimpleHTTPServer
+
+.PHONY: wait-for-changes
+wait-for-changes:
+	-inotifywait --exclude '\.swp' -e modify $$(find $(DIRS) -name '*.rb'; find $(DIRS) -type d)
 
 .PHONY: gem
 gem:

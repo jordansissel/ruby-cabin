@@ -14,20 +14,28 @@ describe Cabin::Metrics do
 
   test "gauge" do
     gauge = @metrics.gauge(self) { 3 }
-    assert_equal(3, gauge.get)
+    assert_equal(3, gauge.value)
     # metrics.first == [identifier, Gauge]
-    assert_equal(3, @metrics.first.last.get)
+    assert_equal(3, @metrics.first.last.value)
   end
 
   test "counter" do
     counter = @metrics.counter(self)
     0.upto(30) do |i|
-      assert_equal(i, counter.get)
+      assert_equal(i, counter.value)
       counter.incr
     end
     31.downto(0) do |i|
-      assert_equal(i, counter.get)
+      assert_equal(i, counter.value)
       counter.decr
+    end
+  end
+
+  test "meter" do
+    meter = @metrics.meter(self)
+    30.times do |i|
+      assert_equal(i, meter.value)
+      meter.mark
     end
   end
 end # describe Cabin::Channel do

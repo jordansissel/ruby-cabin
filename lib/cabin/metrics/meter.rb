@@ -21,10 +21,7 @@ class Cabin::Metrics::Meter
 
   # Get the value of this metric.
   public
-  def get
-    @lock.synchronize do
-      value = @value
-    end
-    return value
-  end # def get
+  def value
+    return @lock.synchronize { @value }
+  end # def value
 end # class Cabin::Metrics::Counter
