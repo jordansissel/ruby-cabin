@@ -7,7 +7,8 @@ test:
 .PHONY: testloop
 testloop:
 	while true; do \
-		$(MAKE) wait-for-changes test; \
+		$(MAKE) test; \
+		$(MAKE) wait-for-changes; \
 	done
 
 .PHONY: serve-coverage

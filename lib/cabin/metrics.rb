@@ -2,6 +2,9 @@ require "cabin/namespace"
 require "cabin/metrics/gauge"
 require "cabin/metrics/meter"
 require "cabin/metrics/counter"
+require "cabin/metrics/timer"
+
+
 
 # What type of metrics do we want?
 #
@@ -17,7 +20,9 @@ require "cabin/metrics/counter"
 #   - count of active/in-flight actions/requests/calls/transactions
 #   - peer metrics (number of cluster members, etc)
 # ------------------------------------------------------------------
+# https://github.com/codahale/metrics/tree/master/metrics-core/src/main/java/com/yammer/metrics/core
 # Reading what Coda Hale's "Metrics" stuff has, here's my summary:
+#
 #   gauges (callback to return a number)
 #   counters (.inc and .dec methods)
 #   meters (.mark to track each 'hit')
@@ -47,29 +52,30 @@ class Cabin::Metrics
     @metrics = {}
   end # def initialize
   
-  # Create a new gauge
-  #
-  # Gauge reads can block your program if you aren't using threads,
-  # so be aware of writing slow-to-execute Gauge callbacks.
-  public
-  def gauge(identifier, &block)
-    @metrics[identifier] = Cabin::Metrics::Gauge.new(&block)
-  end # def gauge
+  private
+  def create(instance, name, metric_object)
+    return @metrics[[instance, name]] = metric_object
+  end # def create
 
   public
-  def counter(identifier)
-    @metrics[identifier] = Cabin::Metrics::Counter.new
+  def counter(instance, name=nil)
+    return create(instance, name, Cabin::Metrics::Counter.new)
   end # def counter
 
   public
-  def meter(identifier)
-    @metrics[identifier] = Cabin::Metrics::Meter.new
+  def meter(instance, name=nil)
+    return create(instance, name, Cabin::Metrics::Meter.new)
   end # def meter
 
   #public
-  #def histogram(identifier)
-    #@metrics[identifier] = Cabin::Metrics::Histogram.new
+  #def histogram(instance, name)
+    #return create(instance, name, Cabin::Metrics::Histogram.new)
   #end # def histogram
+
+  public
+  def timer(instance, name=nil)
+    return create(instance, name, Cabin::Metrics::Timer.new)
+  end # def timer
   
   # iterate over each metric. yields identifer, metric
   def each(&block)

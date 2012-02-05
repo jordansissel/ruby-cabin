@@ -1,11 +1,11 @@
 Gem::Specification.new do |spec|
   paths = %w{lib examples test LICENSE CHANGELIST}
   spec.name = "cabin"
-  spec.version = "0.1.8"
+  spec.version = "0.2.2"
   spec.summary = "Experiments in structured and contextual logging"
   spec.description = "This is an experiment to try and make logging more " \
     "flexible and more consumable. Plain text logs are bullshit, let's " \
-    "emit structured and contextual logs."
+    "emit structured and contextual logs. Metrics, too!"
   spec.license = "Apache License (2.0)"
   spec.authors = ["Jordan Sissel"]
   spec.email = ["jls@semicomplete.com"]

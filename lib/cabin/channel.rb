@@ -44,6 +44,7 @@ require "logger"
 #
 class Cabin::Channel
   include Cabin::Mixins::Logger
+  attr_accessor :metrics
 
   # Create a new logging channel.
   # The default log level is 'info'
@@ -52,6 +53,7 @@ class Cabin::Channel
     @outputs = []
     @data = {}
     @level = :info
+    @metrics = Cabin::Metrics.new
   end # def initialize
 
   # Subscribe a new input
