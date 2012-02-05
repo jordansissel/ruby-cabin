@@ -1,0 +1,16 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    json (1.6.5)
+    multi_json (1.0.4)
+    simplecov (0.5.4)
+      multi_json (~> 1.0.3)
+      simplecov-html (~> 0.5.3)
+    simplecov-html (0.5.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  json
+  simplecov
