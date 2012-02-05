@@ -3,6 +3,7 @@ require "cabin/namespace"
 require "cabin/timer"
 require "cabin/context"
 require "cabin/outputs/stdlib-logger"
+require "cabin/metrics"
 require "logger"
 
 # A wonderful channel for logging.
