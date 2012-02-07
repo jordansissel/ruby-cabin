@@ -47,6 +47,12 @@ class Cabin::Metrics::Timer
     return @lock.synchronize { @invocations }
   end # def value
 
+  # TODO(sissel): Until I find a good API.
+  public
+  def value
+    return count
+  end # def value
+
   class TimerContext
     public
     def initialize(&stop_callback)

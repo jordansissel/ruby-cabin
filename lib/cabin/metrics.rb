@@ -54,6 +54,8 @@ class Cabin::Metrics
   
   private
   def create(instance, name, metric_object)
+    #p :newmetric => [name, instance]
+    #p [instance, instance.class, instance.class.class]
     return @metrics[[instance, name]] = metric_object
   end # def create
 

@@ -23,6 +23,10 @@ wait-for-changes:
 gem:
 	gem build cabin.gemspec
 
+.PHONY: install
+install:
+	gem install $(shell ls -t *gem | head -1)
+
 .PHONY: publish
 publish: GEM=$(shell ls -t *.gem | head -1)
 publish: gem
