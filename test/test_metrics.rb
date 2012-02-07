@@ -56,9 +56,18 @@ describe Cabin::Metrics do
     end
   end
 
+  test "metrics from Cabin::Metrics" do
+    # Verify the Metrics api for creating new metrics.
+    metrics = Cabin::Metrics.new
+    assert(metrics.timer(self).is_a?(Cabin::Metrics::Timer))
+    assert(metrics.counter(self).is_a?(Cabin::Metrics::Counter))
+    assert(metrics.histogram(self).is_a?(Cabin::Metrics::Histogram))
+    assert(metrics.meter(self).is_a?(Cabin::Metrics::Meter))
+  end
+
   test "metrics from logger" do
-    @logger = Cabin::Channel.new
-    meter = @logger.metrics.meter(self)
+    logger = Cabin::Channel.new
+    meter = logger.metrics.meter(self)
     assert_equal(0, meter.value)
   end
 

@@ -67,10 +67,10 @@ class Cabin::Metrics
     return create(instance, name, Cabin::Metrics::Meter.new)
   end # def meter
 
-  #public
-  #def histogram(instance, name)
-    #return create(instance, name, Cabin::Metrics::Histogram.new)
-  #end # def histogram
+  public
+  def histogram(instance, name=nil)
+    return create(instance, name, Cabin::Metrics::Histogram.new)
+  end # def histogram
 
   public
   def timer(instance, name=nil)
