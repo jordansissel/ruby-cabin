@@ -47,9 +47,12 @@ describe Cabin::Metrics do
   test "timer counter" do
     timer = @metrics.timer(self)
     30.times do |i|
-      assert_equal(i, timer.count)
+      assert_equal(i, timer.value)
       assert_equal(i, timer.to_hash[:count])
       timer.time { true }
+      assert(timer.to_hash[:total] > 0, "total should be nonzero")
+      assert(timer.to_hash[:mean] > 0, "mean should be nonzero")
+      assert(timer.to_hash[:max] > 0, "max should be nonzero")
     end
   end
 

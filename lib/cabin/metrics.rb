@@ -3,8 +3,7 @@ require "cabin/metrics/gauge"
 require "cabin/metrics/meter"
 require "cabin/metrics/counter"
 require "cabin/metrics/timer"
-
-
+require "cabin/metrics/histogram"
 
 # What type of metrics do we want?
 #
@@ -31,8 +30,7 @@ require "cabin/metrics/timer"
 #     like meter, but takes values more than simply '1'
 #     as a result, exposes percentiles, median, etc.
 #   timers
-#     combination of meter + histogram
-#     meter for invocations, histogram for duration
+#     a time-observing interface on top of histogram.
 #
 # With the exception of gauges, all the other metrics are all active/pushed.
 # Gauges take callbacks, so their values are pulled, not pushed. The active
