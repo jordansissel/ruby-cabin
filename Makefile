@@ -1,3 +1,5 @@
+VERSION=$(shell awk -F\" '/version = / { print $$2 }' cabin.gemspec)
+GEM=cabin-$(VERSION).gem
 DIRS=lib/ test/
 
 .PHONY: test
@@ -19,15 +21,15 @@ serve-coverage:
 wait-for-changes:
 	-inotifywait --exclude '\.swp' -e modify $$(find $(DIRS) -name '*.rb'; find $(DIRS) -type d)
 
-.PHONY: gem
-gem:
+.PHONY: gem package
+gem package: $(GEM)
+$(GEM):
 	gem build cabin.gemspec
 
 .PHONY: install
-install:
-	gem install $(shell ls -t *gem | head -1)
+install: $(GEM)
+	gem install $(GEM)
 
 .PHONY: publish
-publish: GEM=$(shell ls -t *.gem | head -1)
 publish: gem
 	gem push $(GEM)
