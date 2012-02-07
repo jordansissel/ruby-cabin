@@ -23,10 +23,12 @@ describe Cabin::Metrics do
     counter = @metrics.counter(self)
     0.upto(30) do |i|
       assert_equal(i, counter.value)
+      assert_equal({ :value => i }, counter.to_hash)
       counter.incr
     end
     31.downto(0) do |i|
       assert_equal(i, counter.value)
+      assert_equal({ :value => i }, counter.to_hash)
       counter.decr
     end
   end
@@ -35,6 +37,7 @@ describe Cabin::Metrics do
     meter = @metrics.meter(self)
     30.times do |i|
       assert_equal(i, meter.value)
+      assert_equal({ :value => i }, meter.to_hash)
       meter.mark
     end
   end
@@ -45,6 +48,7 @@ describe Cabin::Metrics do
     timer = @metrics.timer(self)
     30.times do |i|
       assert_equal(i, timer.count)
+      assert_equal(i, timer.to_hash[:count])
       timer.time { true }
     end
   end

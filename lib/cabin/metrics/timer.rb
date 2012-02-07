@@ -10,6 +10,7 @@ class Cabin::Metrics::Timer
   public
   def initialize
     @invocations = 0
+    @total_duration = 0.0
     @lock = Mutex.new
   end # def initialize
 
@@ -35,9 +36,10 @@ class Cabin::Metrics::Timer
 
   public
   def record(duration)
+    # TODO(sissel): histogram the duration
     @lock.synchronize do
       @invocations += 1
-      # TODO(sissel): histogram the duration
+      @total_duration += duration
     end
   end # def record
 
@@ -52,6 +54,16 @@ class Cabin::Metrics::Timer
   def value
     return count
   end # def value
+
+  public
+  def to_hash
+    return @lock.synchronize do
+      { 
+        :count => @invocations, 
+        :duration_sum => @total_duration 
+      }
+    end
+  end # def to_hash
 
   class TimerContext
     public

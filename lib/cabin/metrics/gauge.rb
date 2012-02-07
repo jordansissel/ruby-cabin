@@ -12,4 +12,9 @@ class Cabin::Metrics::Gauge
   def value
     return @block.call
   end # def value
+
+  public
+  def to_hash
+    return { :value => value }
+  end # def to_hash
 end # class Cabin::Metrics::Gauge

@@ -26,4 +26,11 @@ class Cabin::Metrics::Counter
   def value
     return @lock.synchronize { @value }
   end # def value
+
+  public
+  def to_hash
+    return @lock.synchronize do
+      { :value => @value }
+    end
+  end # def to_hash
 end # class Cabin::Metrics::Counter
