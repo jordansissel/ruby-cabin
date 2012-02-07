@@ -26,6 +26,11 @@ gem package: $(GEM)
 $(GEM):
 	gem build cabin.gemspec
 
+.PHONY: bump-version
+bump-version: NEXTVERSION=$(shell echo "$(VERSION)" | awk -F. '{OFS="."; print $$1,$$2,$$3+1}')
+bump-version:
+	sed -i -e 's/.*spec.version =.*/  spec.version = "$(NEXTVERSION)"/' cabin.gemspec
+
 .PHONY: install
 install: $(GEM)
 	gem install $(GEM)
