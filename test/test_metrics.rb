@@ -56,6 +56,19 @@ describe Cabin::Metrics do
     end
   end
 
+  test "timer.time without block" do
+    timer = @metrics.timer(self)
+    30.times do |i|
+      assert_equal(i, timer.value)
+      assert_equal(i, timer.to_hash[:count])
+      t = timer.time
+      t.stop
+      assert(timer.to_hash[:total] > 0, "total should be nonzero")
+      assert(timer.to_hash[:mean] > 0, "mean should be nonzero")
+      assert(timer.to_hash[:max] > 0, "max should be nonzero")
+    end
+  end
+
   test "metrics from Cabin::Metrics" do
     # Verify the Metrics api for creating new metrics.
     metrics = Cabin::Metrics.new

@@ -14,7 +14,8 @@ class Cabin::Metrics::Timer < Cabin::Metrics::Histogram
     return time_block(&block) if block_given?
 
     # Return an object we can .stop
-    return TimerContext.new(method(:record))
+    # Call record(...) when we stop.
+    return TimerContext.new { |duration| record(duration) }
   end # def time
 
   private
