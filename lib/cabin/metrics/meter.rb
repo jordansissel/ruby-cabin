@@ -1,12 +1,16 @@
 require "cabin/namespace"
+require "cabin/inspectable"
 require "thread"
 
 class Cabin::Metrics::Meter
+  include Cabin::Inspectable
+
   # A new Meter 
   #
   # Counters can be incremented and decremented only by 1 at a time..
   public
   def initialize
+    @inspectables = [ :@value ]
     @value = 0
     @lock = Mutex.new
   end # def initialize

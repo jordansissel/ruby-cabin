@@ -1,11 +1,15 @@
 require "cabin/namespace"
+require "cabin/inspectable"
 require "thread"
 
 class Cabin::Metrics::Histogram
+  include Cabin::Inspectable
+
   # A new Histogram. 
   public
   def initialize
     @lock = Mutex.new
+    @inspectables = [ :@total, :@min, :@max, :@count, :@mean ]
 
     # Histogram should track many things, including:
     # - percentiles (50, 75, 90, 95, 99?)

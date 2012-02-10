@@ -47,6 +47,18 @@ class Cabin::Channel
   include Cabin::Mixins::Logger
   attr_accessor :metrics
 
+  # Get a channel for a given identifier. If this identifier has never been
+  # used, a new channel is created for it.
+  # The default identifier is the application executable name.
+  #
+  # This is useful for using the same Cabin::Channel across your
+  # entire application.
+  public
+  def self.get(identifier=$0)
+    @channels ||= Hash.new { |h,k| h[k] = Cabin::Channel.new }
+    return @channels[identifier]
+  end # def Cabin::Channel.get
+
   # Create a new logging channel.
   # The default log level is 'info'
   public

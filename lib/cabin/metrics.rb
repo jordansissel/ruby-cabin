@@ -45,6 +45,7 @@ require "cabin/metrics/histogram"
 class Cabin::Metrics
   include Enumerable
 
+  # Get us a new metrics container.
   public
   def initialize
     @metrics = {}
@@ -52,26 +53,45 @@ class Cabin::Metrics
   
   private
   def create(instance, name, metric_object)
-    #p :newmetric => [name, instance]
-    #p [instance, instance.class, instance.class.class]
-    return @metrics[[instance, name]] = metric_object
+    if !instance.is_a?(String)
+      instance = "#{instance.class.name}<#{instance.object_id}>"
+    end
+
+    if name.nil?
+      metric = instance.to_s
+    else
+      metric = "#{instance}/#{name}"
+    end
+    return @metrics[metric] = metric_object
   end # def create
 
+  # Create a new Counter metric
+  # 'instance' is usually an object owning this metric, but it can be a string.
+  # 'name' is the name of the metric.
   public
   def counter(instance, name=nil)
     return create(instance, name, Cabin::Metrics::Counter.new)
   end # def counter
 
+  # Create a new Meter metric
+  # 'instance' is usually an object owning this metric, but it can be a string.
+  # 'name' is the name of the metric.
   public
   def meter(instance, name=nil)
     return create(instance, name, Cabin::Metrics::Meter.new)
   end # def meter
 
+  # Create a new Histogram metric
+  # 'instance' is usually an object owning this metric, but it can be a string.
+  # 'name' is the name of the metric.
   public
   def histogram(instance, name=nil)
     return create(instance, name, Cabin::Metrics::Histogram.new)
   end # def histogram
 
+  # Create a new Timer metric
+  # 'instance' is usually an object owning this metric, but it can be a string.
+  # 'name' is the name of the metric.
   public
   def timer(instance, name=nil)
     return create(instance, name, Cabin::Metrics::Timer.new)

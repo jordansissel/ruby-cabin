@@ -1,9 +1,13 @@
 require "cabin/namespace"
+require "cabin/inspectable"
 
 class Cabin::Metrics::Gauge
+  include Cabin::Inspectable
+
   # A new Gauge. The block given will be called every time the metric is read.
   public
   def initialize(&block)
+    @inspectables = [ ]
     @block = block
   end # def initialize
 

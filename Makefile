@@ -23,7 +23,7 @@ wait-for-changes:
 
 .PHONY: gem package
 gem package: $(GEM)
-$(GEM):
+$(GEM): $(shell git ls-files | grep '\.rb$$')
 	gem build cabin.gemspec
 
 .PHONY: bump-version
@@ -38,3 +38,7 @@ install: $(GEM)
 .PHONY: publish
 publish: gem
 	gem push $(GEM)
+
+.PHONY: clean
+clean:
+	-rm $(GEM)

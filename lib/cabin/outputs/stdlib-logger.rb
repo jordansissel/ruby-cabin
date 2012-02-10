@@ -13,10 +13,18 @@ class Cabin::Outputs::StdlibLogger
 
   # Receive an event
   public
-  def <<(data)
-    method = data[:level].downcase.to_sym || :info
+  def <<(event)
+    if !event.include?(:level)
+      event[:level] = :info
+    end
+    method = event[:level].downcase.to_sym || :info
+    event.delete(:level)
 
-    message = "#{data[:message]} #{data.to_json}"
+    data = event.clone
+    # delete things from the 'data' portion that's not really data.
+    data.delete(:message)
+    data.delete(:timestamp)
+    message = "#{event[:message]} #{data.to_json}"
 
     #p [@logger.level, logger.class::DEBUG]
     # This will call @logger.info(data) or something similar.

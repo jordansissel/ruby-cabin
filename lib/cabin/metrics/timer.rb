@@ -1,4 +1,5 @@
 require "cabin/namespace"
+require "cabin/inspectable"
 require "cabin/metrics/histogram"
 require "thread"
 
