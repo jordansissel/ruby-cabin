@@ -35,3 +35,7 @@ end
   clock.stop
 end
 
+# Loop through all metrics:
+@logger.metrics.each do |metric|
+  @logger.info(metric.inspect)
+end
