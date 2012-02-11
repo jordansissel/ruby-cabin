@@ -1,7 +1,5 @@
 require "cabin/namespace"
-require "cabin/inspectable"
 require "cabin/metrics/histogram"
-require "thread"
 
 class Cabin::Metrics::Timer < Cabin::Metrics::Histogram
   # Start timing something.

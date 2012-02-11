@@ -44,6 +44,13 @@ describe Cabin::Metrics do
 
   test "meter time-based averages" # TODO(sissel): implement
 
+  test "timer first-run has max == min" do
+    timer = @metrics.timer(self)
+    timer.time { true }
+    assert_equal(timer.to_hash[:min], timer.to_hash[:max],
+                 "With a single event, min and max must be equal")
+  end
+
   test "timer counter" do
     timer = @metrics.timer(self)
     30.times do |i|

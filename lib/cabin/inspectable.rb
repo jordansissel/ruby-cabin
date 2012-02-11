@@ -22,7 +22,7 @@ module Cabin
     #     foo = Foo.new
     #     foo.inspect == '<Foo(1) @foo=123 @bar="hello" >'
     def inspect
-      if instance_variable_defined?(:inspectables)
+      if instance_variable_defined?(:@inspectables)
         ivars = @inspectables
       else
         ivars = instance_variables

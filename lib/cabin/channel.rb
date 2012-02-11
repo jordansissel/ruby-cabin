@@ -45,6 +45,8 @@ require "logger"
 #
 class Cabin::Channel
   include Cabin::Mixins::Logger
+
+  # All channels come with a metrics provider.
   attr_accessor :metrics
 
   # Get a channel for a given identifier. If this identifier has never been
@@ -67,6 +69,7 @@ class Cabin::Channel
     @data = {}
     @level = :info
     @metrics = Cabin::Metrics.new
+    @metrics.channel = self
   end # def initialize
 
   # Subscribe a new input

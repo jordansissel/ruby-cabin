@@ -1,9 +1,9 @@
 require "cabin/namespace"
-require "cabin/inspectable"
+require "cabin/metric"
 require "thread"
 
 class Cabin::Metrics::Histogram
-  include Cabin::Inspectable
+  include Cabin::Metric
 
   # A new Histogram. 
   public
@@ -20,8 +20,8 @@ class Cabin::Metrics::Histogram
     #
     # Sliding values of all of these?
     @total = 0
-    @min = 0
-    @max = 0
+    @min = nil
+    @max = nil
     @count = 0
     @mean = 0.0
   end # def initialize
@@ -31,12 +31,17 @@ class Cabin::Metrics::Histogram
     @lock.synchronize do
       @count += 1
       @total += value
-      @min = value if value < @min
-      @max = value if value > @max
+      if @min.nil? or value < @min
+        @min = value
+      end
+      if @max.nil? or value > @max
+        @max = value
+      end
       @mean = @total / @count
       # TODO(sissel): median
       # TODO(sissel): percentiles
     end
+    emit
   end # def record
 
   # This is a very poor way to access the metric data.

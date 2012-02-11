@@ -1,9 +1,9 @@
 require "cabin/namespace"
-require "cabin/inspectable"
+require "cabin/metric"
 require "thread"
 
 class Cabin::Metrics::Counter
-  include Cabin::Inspectable
+  include Cabin::Metric
 
   # A new Counter. 
   #
@@ -18,11 +18,13 @@ class Cabin::Metrics::Counter
   # increment this counter
   def incr
     @lock.synchronize { @value += 1 }
+    emit
   end # def incr
 
   # decrement this counter
   def decr
     @lock.synchronize { @value -= 1 }
+    emit
   end # def decr
 
   # Get the value of this metric.

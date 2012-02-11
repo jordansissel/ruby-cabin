@@ -1,8 +1,8 @@
 require "cabin/namespace"
-require "cabin/inspectable"
+require "cabin/metric"
 
 class Cabin::Metrics::Gauge
-  include Cabin::Inspectable
+  include Cabin::Metric
 
   # A new Gauge. The block given will be called every time the metric is read.
   public

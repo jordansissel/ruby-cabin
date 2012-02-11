@@ -1,9 +1,9 @@
 require "cabin/namespace"
-require "cabin/inspectable"
+require "cabin/metric"
 require "thread"
 
 class Cabin::Metrics::Meter
-  include Cabin::Inspectable
+  include Cabin::Metric
 
   # A new Meter 
   #
@@ -21,6 +21,7 @@ class Cabin::Metrics::Meter
       @value += 1
       # TODO(sissel): Keep some moving averages?
     end
+    emit
   end # def mark
 
   # Get the value of this metric.

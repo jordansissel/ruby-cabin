@@ -4,6 +4,8 @@ require "cabin/metrics/meter"
 require "cabin/metrics/counter"
 require "cabin/metrics/timer"
 require "cabin/metrics/histogram"
+require "cabin/publisher"
+require "cabin/channel"
 
 # What type of metrics do we want?
 #
@@ -44,13 +46,14 @@ require "cabin/metrics/histogram"
 # and management tools.
 class Cabin::Metrics
   include Enumerable
+  include Cabin::Publisher
 
   # Get us a new metrics container.
   public
   def initialize
     @metrics = {}
   end # def initialize
-  
+
   private
   def create(instance, name, metric_object)
     if !instance.is_a?(String)
@@ -58,11 +61,22 @@ class Cabin::Metrics
     end
 
     if name.nil?
-      metric = instance.to_s
+      # If no name is given, use the class name of the metric.
+      # For example, if we invoke Metrics#timer("foo"), the metric
+      # name will be "foo/timer"
+      metric_name = "#{instance}/#{metric_object.class.name.split("::").last.downcase}"
     else
-      metric = "#{instance}/#{name}"
+      # Otherwise, use "instance/name" as the name.
+      metric_name = "#{instance}/#{name}"
     end
-    return @metrics[metric] = metric_object
+
+    metric_object.channel = @channel
+    metric_object.instance = metric_name
+
+    if @channel
+      @channel.debug("Created metric", :instance => instance, :type => metric_object.class)
+    end
+    return @metrics[metric_name] = metric_object
   end # def create
 
   # Create a new Counter metric
