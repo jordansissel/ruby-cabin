@@ -33,7 +33,7 @@ bump-version:
 
 .PHONY: install
 install: $(GEM)
-	gem install $(GEM)
+	gem install --local $(GEM)
 
 .PHONY: publish
 publish: gem

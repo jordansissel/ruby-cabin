@@ -22,10 +22,16 @@ meter.mark
 # If nil is passed as the 'instance' then the metric class name will be
 # used instead.
 timer = @logger.metrics.timer("ticktock")
-timer.time do
-  sleep rand * 2
+5.times do
+  timer.time do
+    sleep rand * 2
+  end
 end
-clock = timer.time
-sleep rand * 2
-clock.stop
+
+3.times do
+  # Another way to do timing.
+  clock = timer.time
+  sleep rand * 2
+  clock.stop
+end
 
