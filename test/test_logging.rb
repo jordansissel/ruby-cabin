@@ -139,4 +139,15 @@ describe Cabin::Channel do
       @logger.info("foo", { "foo" => "bar" }, "bar")
     end
   end
+
+  test "output to queue" do
+    require "thread"
+    queue = Queue.new
+    @logger.subscribe(queue)
+
+    @logger.info("Hello world")
+    event = queue.pop
+    assert_equal("Hello world", event[:message])
+    assert_equal(:info, event[:level])
+  end
 end # describe Cabin::Channel do
