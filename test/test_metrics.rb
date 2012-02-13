@@ -56,7 +56,7 @@ describe Cabin::Metrics do
     30.times do |i|
       assert_equal(i, timer.value)
       assert_equal(i, timer.to_hash[:count])
-      timer.time { true }
+      timer.time { sleep(0.01) }
       assert(timer.to_hash[:total] > 0, "total should be nonzero")
       assert(timer.to_hash[:mean] > 0, "mean should be nonzero")
       assert(timer.to_hash[:max] > 0, "max should be nonzero")
@@ -69,6 +69,7 @@ describe Cabin::Metrics do
       assert_equal(i, timer.value)
       assert_equal(i, timer.to_hash[:count])
       t = timer.time
+      sleep(0.01)
       t.stop
       assert(timer.to_hash[:total] > 0, "total should be nonzero")
       assert(timer.to_hash[:mean] > 0, "mean should be nonzero")
