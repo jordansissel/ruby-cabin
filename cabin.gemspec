@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
   paths = %w{lib examples test LICENSE CHANGELIST}
   spec.name = "cabin"
-  spec.version = "0.4.1"
+  spec.version = "0.4.2"
   spec.summary = "Experiments in structured and contextual logging"
   spec.description = "This is an experiment to try and make logging more " \
     "flexible and more consumable. Plain text logs are bullshit, let's " \
