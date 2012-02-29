@@ -3,6 +3,7 @@ require "cabin/namespace"
 require "cabin/timer"
 require "cabin/context"
 require "cabin/outputs/stdlib-logger"
+require "cabin/outputs/io"
 require "cabin/metrics"
 require "logger"
 
@@ -80,6 +81,8 @@ class Cabin::Channel
     # Wrap ruby stdlib Logger if given.
     if output.is_a?(::Logger)
       output = Cabin::Outputs::StdlibLogger.new(output)
+    elsif output.is_a?(::IO)
+      output = Cabin::Outputs::IO.new(output)
     end
     @outputs << output
     # TODO(sissel): Return a method or object that allows you to easily
