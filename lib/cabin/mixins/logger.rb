@@ -75,16 +75,8 @@ module Cabin::Mixins::Logger
   private
   def log_with_level(level, message, data={})
     # Invoke 'info?' etc to ask if we should act.
-    event = {}
-    if message.is_a?(Hash)
-      event.merge!(message)
-    else
-      event[:message] = message
-    end
-    event.merge!(data)
-
-    event[:level] = level
-    _log(event)
+    data[:level] = level
+    _log(message, data)
   end # def log_with_level
 
   def log(message, data={})
