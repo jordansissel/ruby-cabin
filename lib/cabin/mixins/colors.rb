@@ -1,42 +1,24 @@
 require "cabin/namespace"
+require "cabin/mixins/logger"
 
 # Colorful logging.
 module Cabin::Mixins::Colors
-  COLORS = [ :black, :red, :green, :yellow, :blue, :magenta, :cyan, :white ]
+  def included(klass)
+    klass.extend(Cabin::Mixins::Logger)
+  end
 
-  MAP = {
-    # ANSI terminal codes
-    :normal => 0,
-    :bold => 1,
-    :black => 30,
-    :red => 31,
-    :green => 32,
-    :yellow => 33,
-    :blue => 34,
-    :magenta => 35,
-    :cyan => 36,
-    :white => 37
-  }
+  COLORS = [ :black, :red, :green, :yellow, :blue, :magenta, :cyan, :white ]
 
   COLORS.each do |color|
     # define the color first
     define_method(color) do |message, data={}|
-      log([MAP[color]], message, data)
+      log(message, data.merge(:color => color))
     end
 
-    # then define the bold version
-    define_method("#{color}!".to_sym) do
-      log([MAP[:bold]], MAP[color]], message, data)
+    # Exclamation marks mean bold. You should probably use bold all the time
+    # because it's awesome.
+    define_method("#{color}!".to_sym) do |message, data={}|
+      log(message, data.merge(:color => color, :bold => true))
     end
   end
-
-  private
-  def log(color_attrs, message, data={})
-    if message.is_a?(Hash)
-      data.merge!(message)
-    else
-      data[:message] = message
-    end
-    publish(data)
-  end # def log
-end # module Cabin::Dragons
+end # module Cabin::Mixins::Colors
