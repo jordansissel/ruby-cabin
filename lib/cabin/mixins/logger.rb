@@ -12,6 +12,8 @@ module Cabin::Mixins::Logger
     :debug => 4
   }
 
+  BACKTRACE_RE = /([^:]+):([0-9]+):in `(.*)'/
+
   def level=(value)
     if value.respond_to?(:downcase)
       @level = value.downcase.to_sym
@@ -70,6 +72,7 @@ module Cabin::Mixins::Logger
     end # def info?, def warn? ...
   end # end defining level-based log methods
 
+  private
   def log_with_level(level, message, data={})
     # Invoke 'info?' etc to ask if we should act.
     event = {}
@@ -104,13 +107,13 @@ module Cabin::Mixins::Logger
     debugharder(caller, data) if @level == :debug
 
     publish(data)
-  end # def log_with_level
+  end # def log
 
   # This method is used to pull useful information about the caller
   # of the logging method such as the caller's file, method, and line number.
-  private
   def debugharder(callstack, data)
-    path, line, method = callstack[1].split(/(?::in `|:|')/)
+    m = BACKTRACE_RE.match(callstack[1])
+    path, line, method = m[1..3]
     whence = $:.detect { |p| path.start_with?(p) }
     if whence
       # Remove the RUBYLIB path portion of the full file name 
