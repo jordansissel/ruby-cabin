@@ -83,14 +83,15 @@ module Cabin::Mixins::Logger
     end
     event.merge!(data)
 
-    # Add extra debugging bits (file, line, method) if level is debug.
-    debugharder(caller, event) if @level == :debug
-
     event[:level] = level
-    log(event)
+    _log(event)
   end # def log_with_level
 
   def log(message, data={})
+    _log(message, data)
+  end
+
+  def _log(message, data={})
     case message
       when Hash
         data.merge!(message)
@@ -104,15 +105,15 @@ module Cabin::Mixins::Logger
     end
 
     # Add extra debugging bits (file, line, method) if level is debug.
-    debugharder(caller, data) if @level == :debug
+    debugharder(caller[2], data) if @level == :debug
 
     publish(data)
   end # def log
 
   # This method is used to pull useful information about the caller
   # of the logging method such as the caller's file, method, and line number.
-  def debugharder(callstack, data)
-    m = BACKTRACE_RE.match(callstack[1])
+  def debugharder(callinfo, data)
+    m = BACKTRACE_RE.match(callinfo)
     path, line, method = m[1..3]
     whence = $:.detect { |p| path.start_with?(p) }
     if whence
