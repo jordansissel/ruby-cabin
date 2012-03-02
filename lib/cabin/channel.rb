@@ -1,6 +1,7 @@
 require "cabin/mixins/logger"
+require "cabin/mixins/timestamp"
+require "cabin/mixins/timer"
 require "cabin/namespace"
-require "cabin/timer"
 require "cabin/context"
 require "cabin/outputs/stdlib-logger"
 require "cabin/outputs/io"
@@ -45,26 +46,42 @@ require "logger"
 #     I, [2011-10-11T01:00:57.993575 #1209]  INFO -- : {:timestamp=>"2011-10-11T01:00:57.993517-0700", :message=>"Done in foo", :level=>:info}
 #
 class Cabin::Channel
+  class << self
+    # Get a channel for a given identifier. If this identifier has never been
+    # used, a new channel is created for it.
+    # The default identifier is the application executable name.
+    #
+    # This is useful for using the same Cabin::Channel across your
+    # entire application.
+    def get(identifier=$0)
+      @channels ||= Hash.new { |h,k| h[k] = Cabin::Channel.new }
+      return @channels[identifier]
+    end # def Cabin::Channel.get
+
+    # Get a list of filters included in this class.
+    def filters
+      @filters ||= []
+    end # def Cabin::Channel.filters
+    
+    # Register a new filter. The block is passed the event. It is expected to
+    # modify that event or otherwise do nothing.
+    def filter(&block)
+      @filters ||= []
+      @filters << block
+    end
+  end # class << self
+
   include Cabin::Mixins::Logger
+  include Cabin::Mixins::Timestamp
+  include Cabin::Mixins::Timer
 
   # All channels come with a metrics provider.
   attr_accessor :metrics
-
-  # Get a channel for a given identifier. If this identifier has never been
-  # used, a new channel is created for it.
-  # The default identifier is the application executable name.
-  #
-  # This is useful for using the same Cabin::Channel across your
-  # entire application.
-  public
-  def self.get(identifier=$0)
-    @channels ||= Hash.new { |h,k| h[k] = Cabin::Channel.new }
-    return @channels[identifier]
-  end # def Cabin::Channel.get
+  
+  private
 
   # Create a new logging channel.
   # The default log level is 'info'
-  public
   def initialize
     @outputs = []
     @data = {}
@@ -76,7 +93,6 @@ class Cabin::Channel
   # Subscribe a new input
   # New events will be sent to the subscriber using the '<<' method
   #   foo << event
-  public
   def subscribe(output)
     # Wrap ruby stdlib Logger if given.
     if output.is_a?(::Logger)
@@ -90,19 +106,16 @@ class Cabin::Channel
   end # def subscribe
  
   # Set some contextual map value
-  public
   def []=(key, value)
     @data[key] = value
   end # def []= 
 
   # Get a context value by name.
-  public
   def [](key)
     @data[key]
   end # def []
 
   # Remove a context value by name.
-  public
   def remove(key)
     @data.delete(key)
   end # def remove
@@ -114,19 +127,18 @@ class Cabin::Channel
   #
   # A special key :timestamp is set at the time of this method call. The value
   # is a string ISO8601 timestamp with microsecond precision.
-  public
   def publish(data)
-    event = {
-      :timestamp => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%6N%z")
-    }
+    event = {}
+    event.merge!(@data) # Merge any logger context
 
-    # Merge any logger context
-    event.merge!(@data)
-    # TODO(sissel): need to refactor string->hash shoving.
     if data.is_a?(String)
       event[:message] = data
     else
       event.merge!(data)
+    end
+
+    self.class.filters.each do |filter|
+      filter.call(event)
     end
 
     @outputs.each do |out|
@@ -134,34 +146,17 @@ class Cabin::Channel
     end
   end # def publish
 
-  # Start timing something.
-  # Returns an instance of Cabin::Timer bound to this Cabin::Channel.
-  # To stop the timer and immediately emit the result to this channel, invoke
-  # the Cabin::Timer#stop method.
-  public
-  def time(data, &block)
-    # TODO(sissel): need to refactor string->hash shoving.
-    if data.is_a?(String)
-      data = { :message => data }
-    end
-
-    timer = Cabin::Timer.new do |duration|
-      # TODO(sissel): Document this field
-      data[:duration] = duration
-      publish(data)
-    end
-
-    if block_given?
-      block.call
-      return timer.stop
-    else
-      return timer
-    end
-  end # def time
-
-  public
   def context
     ctx = Cabin::Context.new(self)
     return ctx
   end # def context
+
+  def dataify(data)
+    if data.is_a?(String)
+      data = { :message => data }
+    end
+    return data
+  end # def dataify
+
+  public(:initialize, :context, :subscribe, :[]=, :[], :remove, :publish, :time, :context)
 end # class Cabin::Channel

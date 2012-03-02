@@ -1,6 +1,5 @@
 require "rubygems"
 require "cabin"
-require "logger"
 
 # Logging::... is something I'm implemented and experimenting with.
 @logger = Cabin::Channel.new
@@ -8,9 +7,8 @@ require "logger"
 # A logging channel can have any number of subscribers.
 # Any subscriber is simply expected to respond to '<<' and take a single
 # argument (the event)
-# Special case of stdlib Logger instances that are wrapped smartly to 
-# log JSON and call the right Logger method (Logger#info, etc).
-@logger.subscribe(Logger.new(STDOUT))
+# Special case handling of stdlib Logger and IO objects comes for free, though.
+@logger.subscribe(STDOUT)
 
 # You can store arbitrary key-value pairs in the logging channel. 
 # These are emitted with every event.
