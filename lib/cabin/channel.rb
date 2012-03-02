@@ -119,6 +119,8 @@ class Cabin::Channel
     event = {
       :timestamp => Time.now.strftime("%Y-%m-%dT%H:%M:%S.%6N%z")
     }
+
+    # Merge any logger context
     event.merge!(@data)
     # TODO(sissel): need to refactor string->hash shoving.
     if data.is_a?(String)
