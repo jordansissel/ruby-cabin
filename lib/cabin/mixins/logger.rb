@@ -70,7 +70,6 @@ module Cabin::Mixins::Logger
     end # def info?, def warn? ...
   end # end defining level-based log methods
 
-  private
   def log_with_level(level, message, data={})
     # Invoke 'info?' etc to ask if we should act.
     event = {}
@@ -88,12 +87,17 @@ module Cabin::Mixins::Logger
     log(event)
   end # def log_with_level
 
-  private
   def log(message, data={})
-    if message.is_a?(Hash)
-      data.merge!(message)
-    else
-      data[:message] = message
+    case message
+      when Hash
+        data.merge!(message)
+      when Exception
+        # message is an exception
+        data[:message] = message.to_s
+        data[:exception] = message.class
+        data[:backtrace] = message.backtrace
+      else
+        data[:message] = message
     end
 
     # Add extra debugging bits (file, line, method) if level is debug.
@@ -120,4 +124,6 @@ module Cabin::Mixins::Logger
     data[:line] = line
     data[:method] = method
   end # def debugharder
+
+  public(:log)
 end # module Cabin::Mixins::Logger
