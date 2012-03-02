@@ -36,7 +36,7 @@ class Cabin::Outputs::IO
     :fatal => :red,
     :error => :red,
     :warn => :yellow,
-    :info => nil, # default color
+    :info => :green, # default color
     :debug => :cyan,
   }
 
@@ -77,7 +77,7 @@ class Cabin::Outputs::IO
     end
     message.unshift("\e[#{CODEMAP[color.to_sym]}m") if !color.nil?
     message.unshift("\e[#{CODEMAP[bold]}m") if !bold.nil?
-    message.push("\e[#0m") if !(bold.nil? and color.nil?)
+    message.push("\e[#{CODEMAP[:normal]}m") if !(bold.nil? and color.nil?)
     @io.puts(message.join(""))
     @io.flush
   end # def <<
