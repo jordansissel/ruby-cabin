@@ -59,7 +59,7 @@ module Cabin::Mixins::Logger
                                   "a #{data.class.name}, I require a Hash.")
       end
 
-      log(level, message, data) if send(predicate)
+      log_with_level(level, message, data) if send(predicate)
     end
 
     # def info?, def warn? ...
@@ -71,8 +71,25 @@ module Cabin::Mixins::Logger
   end # end defining level-based log methods
 
   private
-  def log(level, message, data={})
+  def log_with_level(level, message, data={})
     # Invoke 'info?' etc to ask if we should act.
+    event = {}
+    if message.is_a?(Hash)
+      event.merge!(message)
+    else
+      event[:message] = message
+    end
+    event.merge!(data)
+
+    # Add extra debugging bits (file, line, method) if level is debug.
+    debugharder(caller, event) if @level == :debug
+
+    event[:level] = level
+    log(event)
+  end # def log_with_level
+
+  private
+  def log(message, data={})
     if message.is_a?(Hash)
       data.merge!(message)
     else
@@ -82,9 +99,8 @@ module Cabin::Mixins::Logger
     # Add extra debugging bits (file, line, method) if level is debug.
     debugharder(caller, data) if @level == :debug
 
-    data[:level] = level
     publish(data)
-  end # def log
+  end # def log_with_level
 
   # This method is used to pull useful information about the caller
   # of the logging method such as the caller's file, method, and line number.
