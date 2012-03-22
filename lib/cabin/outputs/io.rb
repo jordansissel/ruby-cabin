@@ -1,5 +1,6 @@
 require "cabin"
 require "json"
+require "thread"
 
 # Wrap IO objects with a reasonable log output. 
 #
@@ -42,14 +43,17 @@ class Cabin::Outputs::IO
 
   def initialize(io)
     @io = io
+    @lock = Mutex.new
   end # def initialize
 
   # Receive an event
   def <<(event)
-    if !@io.tty?
-      @io.puts(event.to_json)
-    else
-      tty_write(event)
+    @lock.synchronize do
+      if !@io.tty?
+        @io.puts(event.to_json)
+      else
+        tty_write(event)
+      end
     end
   end # def <<
 
