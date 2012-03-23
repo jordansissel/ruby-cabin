@@ -93,7 +93,7 @@ module Cabin::Mixins::Logger
         data[:exception] = message.class
         data[:backtrace] = message.backtrace
       else
-        data[:message] = message
+        data = { :message => message }.merge(data)
     end
 
     # Add extra debugging bits (file, line, method) if level is debug.
