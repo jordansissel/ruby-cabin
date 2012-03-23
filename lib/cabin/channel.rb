@@ -6,7 +6,8 @@ require "cabin/context"
 require "cabin/outputs/stdlib-logger"
 require "cabin/outputs/io"
 require "cabin/metrics"
-require "logger"
+require "logger" # stdlib
+require "thread"
 
 # A wonderful channel for logging.
 #
@@ -71,8 +72,8 @@ class Cabin::Channel
     end
   end # class << self
 
-  include Cabin::Mixins::Logger
   include Cabin::Mixins::Timestamp
+  include Cabin::Mixins::Logger
   include Cabin::Mixins::Timer
 
   # All channels come with a metrics provider.
@@ -83,16 +84,19 @@ class Cabin::Channel
   # Create a new logging channel.
   # The default log level is 'info'
   def initialize
-    @outputs = []
+    @subscribers = {}
     @data = {}
     @level = :info
     @metrics = Cabin::Metrics.new
     @metrics.channel = self
+    @subscriber_lock = Mutex.new
   end # def initialize
 
   # Subscribe a new input
   # New events will be sent to the subscriber using the '<<' method
   #   foo << event
+  #
+  # Returns a subscription id you can use later to unsubscribe
   def subscribe(output)
     # Wrap ruby stdlib Logger if given.
     if output.is_a?(::Logger)
@@ -100,10 +104,18 @@ class Cabin::Channel
     elsif output.is_a?(::IO)
       output = Cabin::Outputs::IO.new(output)
     end
-    @outputs << output
-    # TODO(sissel): Return a method or object that allows you to easily
-    # unsubscribe?
+    @subscriber_lock.synchronize do
+      @subscribers[output.object_id] = output
+    end
+    return output.object_id
   end # def subscribe
+
+  # Unsubscribe. Takes a 'subscription id' as returned by the subscribe method
+  def unsubscribe(id)
+    @subscriber_lock.synchronize do
+      @subscribers.delete(id)
+    end
+  end # def unsubscribe
  
   # Set some contextual map value
   def []=(key, value)
@@ -129,22 +141,24 @@ class Cabin::Channel
   # is a string ISO8601 timestamp with microsecond precision.
   def publish(data)
     event = {}
-    event.merge!(@data) # Merge any logger context
+    self.class.filters.each do |filter|
+      filter.call(event)
+    end
 
     if data.is_a?(String)
       event[:message] = data
     else
       event.merge!(data)
     end
+    event.merge!(@data) # Merge any logger context
 
-    self.class.filters.each do |filter|
-      filter.call(event)
-    end
-
-    @outputs.each do |out|
-      out << event
+    @subscribers.each do |id, output|
+      output << event
     end
   end # def publish
+
+  # Make channels chainable
+  alias :<<, :publish
 
   def context
     ctx = Cabin::Context.new(self)
@@ -158,5 +172,5 @@ class Cabin::Channel
     return data
   end # def dataify
 
-  public(:initialize, :context, :subscribe, :[]=, :[], :remove, :publish, :time, :context)
+  public(:initialize, :context, :subscribe, :unsubscribe, :[]=, :[], :remove, :publish, :time, :context)
 end # class Cabin::Channel

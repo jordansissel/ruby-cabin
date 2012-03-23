@@ -56,12 +56,11 @@ describe Cabin::Channel do
     assert(event[:duration].is_a?(Numeric))
   end
 
-  test "double subscription" do
+  test "double subscription should still only subscribe once" do
     @logger.subscribe(@target)
     @logger.publish("Hello world")
-    assert_equal(2, @target.data.length)
+    assert_equal(1, @target.data.length)
     assert_equal("Hello world", @target.data[0][:message])
-    assert_equal("Hello world", @target.data[1][:message])
   end 
 
   test "context values" do
