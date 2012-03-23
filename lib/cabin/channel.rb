@@ -47,6 +47,9 @@ require "thread"
 #     I, [2011-10-11T01:00:57.993575 #1209]  INFO -- : {:timestamp=>"2011-10-11T01:00:57.993517-0700", :message=>"Done in foo", :level=>:info}
 #
 class Cabin::Channel
+  @channel_lock = Mutex.new
+  @channels = Hash.new { |h,k| h[k] = Cabin::Channel.new }
+
   class << self
     # Get a channel for a given identifier. If this identifier has never been
     # used, a new channel is created for it.
@@ -55,9 +58,20 @@ class Cabin::Channel
     # This is useful for using the same Cabin::Channel across your
     # entire application.
     def get(identifier=$0)
-      @channels ||= Hash.new { |h,k| h[k] = Cabin::Channel.new }
-      return @channels[identifier]
+      return @channel_lock.synchronize { @channels[identifier] }
     end # def Cabin::Channel.get
+
+    def set(identifier, channel)
+      return @channel_lock.synchronize { @channels[identifier] = channel }
+    end # def Cabin::Channel.set
+
+    def each(&block)
+      @channel_lock.synchronize do
+        @channels.each do |identifier, channel|
+          yield identifier, channel
+        end
+      end
+    end # def Cabin::Channel.each
 
     # Get a list of filters included in this class.
     def filters
@@ -152,13 +166,12 @@ class Cabin::Channel
     end
     event.merge!(@data) # Merge any logger context
 
-    @subscribers.each do |id, output|
-      output << event
+    @subscriber_lock.synchronize do
+      @subscribers.each do |id, output|
+        output << event
+      end
     end
   end # def publish
-
-  # Make channels chainable
-  alias :<<, :publish
 
   def context
     ctx = Cabin::Context.new(self)
