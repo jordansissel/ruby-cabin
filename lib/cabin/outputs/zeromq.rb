@@ -12,7 +12,7 @@ class Cabin::Outputs::ZeroMQ
 
   CONTEXT = ZMQ::Context.new
 
-  attr_reader :socket, :topic
+  attr_reader :socket, :topology, :topic
 
   # Create a new ZeroMQ output.
   #
@@ -26,14 +26,13 @@ class Cabin::Outputs::ZeroMQ
   def initialize(addresses, options={})
     options = DEFAULTS.merge(options)
 
-    case options[:topology]
+    @topology = options[:topology].to_s
+    case @topology
     when "pushpull"
       socket_type = ZMQ::PUSH
     when "pubsub"
       socket_type = ZMQ::PUB
-    when Fixnum
-      socket_type = options[:topology]
-    end # case socket_type
+    end
 
     @topic = options[:topic]
     @socket = CONTEXT.socket(socket_type)
@@ -51,6 +50,18 @@ class Cabin::Outputs::ZeroMQ
     end
 
     #define_finalizer
+  end
+
+  def linger
+    array = []
+    error_check @socket.getsockopt(ZMQ::LINGER, array), "while getting ZMQ::LINGER"
+    array.first
+  end
+
+  def hwm
+    array = []
+    error_check @socket.getsockopt(ZMQ::HWM, array), "while getting ZMQ::HWM"
+    array.first
   end
 
   def <<(event)
