@@ -1,6 +1,15 @@
+PATH
+  remote: .
+  specs:
+    cabin (0.4.4)
+      json
+
 GEM
   remote: http://rubygems.org/
   specs:
+    ffi (1.0.11)
+    ffi-rzmq (0.9.3)
+      ffi
     json (1.6.5)
     minitest (2.11.1)
     multi_json (1.0.4)
@@ -13,6 +22,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  cabin!
+  ffi-rzmq
   json
   minitest
   simplecov
