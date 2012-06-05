@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    cabin (0.4.4)
+      json
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -13,6 +19,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  cabin!
   json
   minitest
   simplecov
