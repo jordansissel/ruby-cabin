@@ -45,6 +45,11 @@ class Cabin::Outputs::ZeroMQ
     error_check @socket.setsockopt(ZMQ::LINGER, options[:linger]), "while setting ZMQ::LINGER to #{options[:linger]}"
     error_check @socket.setsockopt(ZMQ::HWM, options[:hwm]), "while setting ZMQ::HWM to #{options[:hwm]}"
 
+    #TODO use cabin's teardown when it exists
+    at_exit do
+      teardown
+    end
+
     #define_finalizer
   end
 
@@ -56,16 +61,15 @@ class Cabin::Outputs::ZeroMQ
     error_check @socket.send_string(event.to_json), "in send_string"
   end
 
+  def teardown
+    @socket.close if @socket
+  end
+
   private
   def error_check(rc, doing)
     unless ZMQ::Util.resultcode_ok?(rc)
       raise "ZeroMQ Error while #{doing}"
     end
-  end
-
-  #TODO use cabin's teardown when it exists
-  at_exit do
-    @socket.close unless @socket.nil?
   end
 
   # This causes the following message on exit:
