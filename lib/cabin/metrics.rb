@@ -51,6 +51,7 @@ class Cabin::Metrics
   # Get us a new metrics container.
   public
   def initialize
+    @metrics_lock = Mutex.new
     @metrics = {}
   end # def initialize
 
@@ -76,7 +77,9 @@ class Cabin::Metrics
     if @channel
       @channel.debug("Created metric", :instance => instance, :type => metric_object.class)
     end
-    return @metrics[metric_name] = metric_object
+    return @metrics_lock.synchronize do
+      @metrics[metric_name] = metric_object
+    end
   end # def create
 
   # Create a new Counter metric
@@ -114,6 +117,8 @@ class Cabin::Metrics
   # iterate over each metric. yields identifer, metric
   def each(&block)
     # delegate to the @metrics hash until we need something fancier
-    @metrics.each(&block)
+    @metrics_lock.synchronize do
+      @metrics.each(&block)
+    end
   end # def each
 end # class Cabin::Metrics
