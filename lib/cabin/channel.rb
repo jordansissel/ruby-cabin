@@ -50,6 +50,11 @@ class Cabin::Channel
   @channel_lock = Mutex.new
   @channels = Hash.new { |h,k| h[k] = Cabin::Channel.new }
 
+  # add superclass filters to subclass
+  def self.inherited(subclass)
+     subclass.filters.concat(self.filters)
+  end
+
   class << self
     # Get a channel for a given identifier. If this identifier has never been
     # used, a new channel is created for it.
