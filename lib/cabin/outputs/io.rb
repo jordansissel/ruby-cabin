@@ -1,17 +1,16 @@
 require "cabin"
-require "json"
 require "thread"
 
 # Wrap IO objects with a reasonable log output. 
 #
 # If the IO is *not* attached to a tty (io#tty? returns false), then
-# the event will be written in json format terminated by a newline:
+# the event will be written in ruby inspect format terminated by a newline:
 #
-#     { "timestamp": ..., "message": message, ... }
+#     { "timestamp" => ..., "message" => message, ... }
 #
 # If the IO is attached to a TTY, there are # human-friendly in this format:
 #
-#     message {json data}
+#     message { event data }
 #
 # Additionally, colorized output may be available. If the event has :level,
 # :color, or :bold. Any of the Cabin::Mixins::Logger methods (info, error, etc)
@@ -50,7 +49,7 @@ class Cabin::Outputs::IO
   def <<(event)
     @lock.synchronize do
       if !@io.tty?
-        @io.puts(event.to_json)
+        @io.puts(event.inspect)
       else
         tty_write(event)
       end
@@ -77,7 +76,7 @@ class Cabin::Outputs::IO
     if data.empty?
       message = [event[:message]]
     else
-      message = ["#{event[:message]} #{data.to_json}"]
+      message = ["#{event[:message]} #{data.inspect}"]
     end
     message.unshift("\e[#{CODEMAP[color.to_sym]}m") if !color.nil?
     message.unshift("\e[#{CODEMAP[bold]}m") if !bold.nil?

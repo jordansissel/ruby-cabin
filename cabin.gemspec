@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email = ["jls@semicomplete.com"]
   spec.homepage = "https://github.com/jordansissel/ruby-cabin"
 
-  spec.add_dependency("json")
+  #spec.add_dependency("json")
   spec.require_paths << "lib"
 
   spec.bindir = "bin"

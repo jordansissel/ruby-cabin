@@ -1,9 +1,9 @@
 require "cabin"
-require "json"
 
 # Wrap Ruby stdlib's logger. This allows you to output to a normal ruby logger
 # with Cabin. Since Ruby's Logger has a love for strings alone, this 
-# wrapper will convert the data/event to json before sending it to Logger.
+# wrapper will convert the data/event to ruby inspect format before sending it
+# to Logger.
 class Cabin::Outputs::StdlibLogger
   public
   def initialize(logger)
@@ -24,7 +24,7 @@ class Cabin::Outputs::StdlibLogger
     # delete things from the 'data' portion that's not really data.
     data.delete(:message)
     data.delete(:timestamp)
-    message = "#{event[:message]} #{data.to_json}"
+    message = "#{event[:message]} #{data.inspect}"
 
     #p [@logger.level, logger.class::DEBUG]
     # This will call @logger.info(data) or something similar.
