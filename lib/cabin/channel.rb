@@ -1,4 +1,5 @@
 require "cabin/mixins/logger"
+require "cabin/mixins/pipe"
 require "cabin/mixins/timestamp"
 require "cabin/mixins/timer"
 require "cabin/namespace"
@@ -88,6 +89,7 @@ class Cabin::Channel
 
   include Cabin::Mixins::Timestamp
   include Cabin::Mixins::Logger
+  include Cabin::Mixins::Pipe
   include Cabin::Mixins::Timer
 
   # All channels come with a metrics provider.
