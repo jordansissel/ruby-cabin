@@ -12,7 +12,7 @@ module Cabin::Mixins::Logger
     :debug => 4
   }
 
-  BACKTRACE_RE = /([^:]+):([0-9]+):in `(.*)'/
+  BACKTRACE_RE = /([^:]+):([0-9]+)(?::in `(.*)')?/
 
   def level=(value)
     if value.respond_to?(:downcase)
@@ -106,6 +106,7 @@ module Cabin::Mixins::Logger
   # of the logging method such as the caller's file, method, and line number.
   def debugharder(callinfo, data)
     m = BACKTRACE_RE.match(callinfo)
+    return unless m
     path, line, method = m[1..3]
     whence = $:.detect { |p| path.start_with?(p) }
     if whence
@@ -118,7 +119,7 @@ module Cabin::Mixins::Logger
     
     data[:file] = file
     data[:line] = line
-    data[:method] = method
+    data[:method] = method if data[:method]
   end # def debugharder
 
   public(:log)
