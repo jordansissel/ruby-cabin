@@ -6,6 +6,7 @@ require "cabin/namespace"
 require "cabin/context"
 require "cabin/outputs/stdlib-logger"
 require "cabin/outputs/io"
+require "cabin/outputs/raw"
 require "cabin/metrics"
 require "logger" # stdlib
 require "thread"
