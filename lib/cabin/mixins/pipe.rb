@@ -28,7 +28,7 @@ module Cabin::Mixins::Pipe
   #     write(1, "Fri Jan 11 22:49:42 PST 2013\n", 29) = 29 {"level":"error"}
   #     Fri Jan 11 22:49:42 PST 2013 {"level":"info"}
   #     +++ exited with 0 +++ {"level":"error"}
-  def pipe(io_to_method_map)
+  def pipe(io_to_method_map, &block)
     fds = io_to_method_map.keys
 
     while !fds.empty?
@@ -43,6 +43,7 @@ module Cabin::Mixins::Pipe
         end
 
         method_name = io_to_method_map[fd]
+        block.call(line, method_name) if block_given?
         send(method_name, line)
       end # readers.each
     end # while !fds.empty?
