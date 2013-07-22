@@ -1,7 +1,7 @@
 require "cabin"
 
 # Wrap Ruby stdlib's logger. This allows you to output to a normal ruby logger
-# with Cabin. Since Ruby's Logger has a love for strings alone, this 
+# with Cabin. Since Ruby's Logger has a love for strings alone, this
 # wrapper will convert the data/event to ruby inspect format before sending it
 # to Logger.
 class Cabin::Outputs::StdlibLogger
@@ -17,7 +17,11 @@ class Cabin::Outputs::StdlibLogger
     if !event.include?(:level)
       event[:level] = :info
     end
-    method = event[:level].downcase.to_sym || :info
+    if event[:level].is_a?(Symbol)
+      method = event[:level]
+    else
+      method = event[:level].downcase.to_sym || :info
+    end
     event.delete(:level)
 
     data = event.clone
