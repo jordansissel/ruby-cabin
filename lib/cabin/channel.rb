@@ -2,6 +2,7 @@ require "cabin/mixins/logger"
 require "cabin/mixins/pipe"
 require "cabin/mixins/timestamp"
 require "cabin/mixins/timer"
+require "cabin/mixins/terminal"
 require "cabin/namespace"
 require "cabin/context"
 require "cabin/outputs/stdlib-logger"
@@ -91,6 +92,7 @@ class Cabin::Channel
   include Cabin::Mixins::Logger
   include Cabin::Mixins::Pipe
   include Cabin::Mixins::Timer
+  include Cabin::Mixins::Terminal
 
   # All channels come with a metrics provider.
   attr_accessor :metrics
@@ -155,7 +157,7 @@ class Cabin::Channel
   #
   # A special key :timestamp is set at the time of this method call. The value
   # is a string ISO8601 timestamp with microsecond precision.
-  def publish(data)
+  def publish(data, &block)
     event = {}
     self.class.filters.each do |filter|
       filter.call(event)
@@ -170,7 +172,8 @@ class Cabin::Channel
 
     @subscriber_lock.synchronize do
       @subscribers.each do |id, output|
-        output << event
+        append =  block_given? ? block.call(output, event) : true
+        output << event if append
       end
     end
   end # def publish

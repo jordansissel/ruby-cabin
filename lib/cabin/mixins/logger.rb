@@ -119,7 +119,7 @@ module Cabin::Mixins::Logger
     
     data[:file] = file
     data[:line] = line
-    data[:method] = method if data[:method]
+    data[:method] = method
   end # def debugharder
 
   public(:log)
