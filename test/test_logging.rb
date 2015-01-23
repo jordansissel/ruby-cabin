@@ -27,6 +27,12 @@ describe Cabin::Channel do
     end
   end # class Receiver
 
+  class TtyReceiver < Receiver
+    def tty?
+      true
+    end
+  end
+
   before do
     @logger = Cabin::Channel.new
     @target = Receiver.new
@@ -103,6 +109,19 @@ describe Cabin::Channel do
       @logger.send(level, "Hello world")
       assert_equal(0, @target.data.length)
     end
+  end
+
+  test "standard use case, 'terminal' logging when there is no tty" do
+    @logger.terminal('Hello world')
+    assert_equal(true, @target.data.empty?)
+  end
+
+  test "standard use case, 'terminal' logging when there is a tty" do
+    tty_target = TtyReceiver.new
+    id   = @logger.subscribe(tty_target)
+    @logger.terminal('Hello world')
+    assert_equal('Hello world', tty_target.data[0][:message])
+    @logger.unsubscribe(id)
   end
 
   test "extra debugging data" do 

@@ -48,7 +48,7 @@ class Cabin::Outputs::IO
   # Receive an event
   def <<(event)
     @lock.synchronize do
-      if !@io.tty?
+      if !tty?
         @io.puts(event.inspect)
       else
         tty_write(event)
@@ -56,6 +56,9 @@ class Cabin::Outputs::IO
     end
   end # def <<
 
+  def tty?
+    @io.tty?
+  end
   private
   def tty_write(event)
     # The io is attached to a tty, so make pretty colors.
