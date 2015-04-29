@@ -50,6 +50,7 @@ class Cabin::Outputs::IO
     @lock.synchronize do
       if !tty?
         @io.puts(event.inspect)
+        @io.flush
       else
         tty_write(event)
       end
