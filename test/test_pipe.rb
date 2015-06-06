@@ -56,10 +56,7 @@ describe Cabin::Channel do
 
     @logger.pipe(@info_reader => :info, @error_reader => :error)
 
-    assert_equal(
-      [:level, :message, :timestamp],
-      @target.data.first.keys.sort
-    )
+    assert_equal(3, @target.data.first.keys.length)
 
     @target.data.map {|out| out.delete(:timestamp) }
     assert_equal(
