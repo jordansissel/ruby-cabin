@@ -59,19 +59,19 @@ describe Cabin::Channel do
     assert_equal(3, @target.data.first.keys.length)
 
     @target.data.map {|out| out.delete(:timestamp) }
-    assert_equal(
-      [
-        {
-          :message => 'Hello world',
-          :level => :info
-        },
-        {
-          :message => 'Goodbye world',
-          :level => :error
-        }
-      ],
-      @target.data
-    )
+    expected_responses = [
+      {
+        :message => 'Hello world',
+        :level => :info
+      },
+      {
+        :message => 'Goodbye world',
+        :level => :error
+      }
+    ]
+    assert_includes(expected_responses, @target.data.shift)
+    assert_includes(expected_responses, @target.data.shift)
+    assert_equal([], @target.data)
   end
 
   test 'Piping with a block' do
