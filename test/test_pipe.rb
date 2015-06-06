@@ -55,11 +55,26 @@ describe Cabin::Channel do
     @error_writer.close
 
     @logger.pipe(@info_reader => :info, @error_reader => :error)
-    assert_equal(2, @target.data.length)
-    assert_equal('Hello world',   @target.data[0][:message])
-    assert_equal(:info,           @target.data[0][:level])
-    assert_equal('Goodbye world', @target.data[1][:message])
-    assert_equal(:error,          @target.data[1][:level])
+
+    assert_equal(
+      [:level, :message, :timestamp],
+      @target.data.first.keys.sort
+    )
+
+    @target.data.map {|out| out.delete(:timestamp) }
+    assert_equal(
+      [
+        {
+          :message => 'Hello world',
+          :level => :info
+        },
+        {
+          :message => 'Goodbye world',
+          :level => :error
+        }
+      ],
+      @target.data
+    )
   end
 
   test 'Piping with a block' do
