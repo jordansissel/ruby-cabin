@@ -1,5 +1,7 @@
 # Logging kind of sucks.
 
+[![Build Status](https://travis-ci.org/rud/ruby-cabin.svg?branch=travis-trigger)](https://travis-ci.org/rud/ruby-cabin)
+
 I want:
 
 ## Context and Structured Data
