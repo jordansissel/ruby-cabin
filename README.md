@@ -4,7 +4,7 @@ I want:
 
 ## Context and Structured Data
 
-because logging with printf makes it hard to read later. 
+because logging with `printf` makes it hard to read later.
 
 Why write code that's easy to maintain but not write logs that are the same?
 Structured data means you don't need crazy regular expression skills to make
@@ -35,7 +35,7 @@ hits by response code, count errors, time latencies, etc.
 
 ## Separation of Data and View
 
-Using printf or similar logging methods is bad because you are merging your
+Using `printf` or similar logging methods is bad because you are merging your
 data with your view of that data.
 
 I want to be able to log in a structured way and have the log output know how
@@ -91,42 +91,52 @@ JSON? That's fine, JSON is just a serialization - a data representation - there
 are plenty of choices...
 
 ... but I digress. Your applications have context at the time of logging. Most
-of the time you try to embed it in some silly printf or string-interpolated
+of the time you try to embed it in some silly `printf` or string-interpolated
 meatball, right? Stop that.
 
 Instead of code like this:
 
-    logger.error("#{hostname} #{program}[#{pid}]: error: PAM: authentication error for illegal user #{user} from #{client}")
+``` ruby
+logger.error("#{hostname} #{program}[#{pid}]: error: PAM: authentication error for illegal user #{user} from #{client}")
+```
 
 and output like this:
 
-    Sep 25 13:44:37 fbsd1 sshd[4374]: error: PAM: authentication error for illegal user amelia from e210255180014.ec-userreverse.dion.ne.jp
+```
+Sep 25 13:44:37 fbsd1 sshd[4374]: error: PAM: authentication error for illegal user amelia from e210255180014.ec-userreverse.dion.ne.jp
+```
 
 and a regex to parse it like this:
 
-    /haha, just kidding I'm not writing a regex to parse that crap./
+```
+/haha, just kidding I'm not writing a regex to parse that crap./
+```
 
 How about this:
 
-    logger.error("PAM: authentication error for illegal user", {
-      :hostname => "fbsd1",
-      :program => "sshd",
-      :pid => 4374,
-      :user => "amelia",
-      :client => "e210255180014.ec-userreverse.dion.ne.jp"
-    })
+``` ruby
+logger.error("PAM: authentication error for illegal user", {
+  :hostname => "fbsd1",
+  :program => "sshd",
+  :pid => 4374,
+  :user => "amelia",
+  :client => "e210255180014.ec-userreverse.dion.ne.jp"
+})
+```
 
 And output in any structured data format, like json:
 
-    { 
-      "timestamp": "2011-09-25T13:44:37.034Z",
-      "message": "PAM: authentication error for illegal user",
-      "hostname": "fbsd1",
-      "program": "sshd",
-      "pid": 4374,
-      "user": "amelia",
-      "client": "e210255180014.ec-userreverse.dion.ne.jp"
-    }
+``` json
+{
+  "timestamp": "2011-09-25T13:44:37.034Z",
+  "message": "PAM: authentication error for illegal user",
+  "hostname": "fbsd1",
+  "program": "sshd",
+  "pid": 4374,
+  "user": "amelia",
+  "client": "e210255180014.ec-userreverse.dion.ne.jp"
+}
+```
 
 Log structured stuff and you can trivially do some nice analytics and searching on your logs.
 
@@ -134,36 +144,45 @@ Log structured stuff and you can trivially do some nice analytics and searching 
 
 Want to time something and log it?
 
-    n = 30
-    logger[:input] = n
-    logger.time("fibonacci duration") do
-      fib(30)
-    end
+``` ruby
+n = 30
+logger[:input] = n
+logger.time("fibonacci duration") do
+  fib(30)
+end
+```
 
 Output in JSON format:
 
-    {
-      "timestamp":"2011-10-11T02:17:12.447487-0700",
-      "input":30,
-      "message":"fibonacci duration",
-      "duration":1.903017632
-    }
+``` json
+{
+  "timestamp":"2011-10-11T02:17:12.447487-0700",
+  "input":30,
+  "message":"fibonacci duration",
+  "duration":1.903017632
+}
+```
 
 # Metrics like counters?
 
-    metrics = Cabin::Channel.new
-    logger = Cabin::Channel.new
+``` ruby
+metrics = Cabin::Channel.new
+logger = Cabin::Channel.new
 
-    # Pretend you can subscribe rrdtool, graphite, or statsd to the 'metrics'
-    # channel. Pretend the 'logger' channel has been subscribed to something
-    # that writes to stdout or disk.
+# Pretend you can subscribe rrdtool, graphite, or statsd to the 'metrics'
+# channel. Pretend the 'logger' channel has been subscribed to something
+# that writes to stdout or disk.
 
-    begin
-      logger.time("Handling request") do
-        handle_request
-      end
-      metrics[:hits] += 1
-    rescue => e
-      metrics[:errors] += 1
-      logger.error("An error occurred", :exception => e, :backtrace => e.backtrace)
-    end
+begin
+  logger.time("Handling request") do
+    handle_request
+  end
+  metrics[:hits] += 1
+rescue => e
+  metrics[:errors] += 1
+  logger.error("An error occurred",
+    :exception => e,
+    :backtrace => e.backtrace
+  )
+end
+```
