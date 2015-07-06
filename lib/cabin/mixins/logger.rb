@@ -42,8 +42,8 @@ module Cabin::Mixins::Logger
     # Arguments: message, data, data is assumed to be {} if nil
     # This hack is necessary because ruby 1.8 doesn't support default arguments
     # on blocks.
-    define_method(level) do |*args| #|message, data={}|
-      if args.size < 1
+    define_method(level) do |*args, &block| #|message, data={}|
+      if args.size < 1 && !block
         raise ::ArgumentError.new("#{self.class.name}##{level}(message, " \
                                   "data={}) requires at least 1 argument")
       end
@@ -52,8 +52,22 @@ module Cabin::Mixins::Logger
                                   "data={}) takes at most 2 arguments")
       end
 
-      message = args[0]
-      data = args[1] || {}
+      return unless send(predicate)
+
+      if block 
+        block_results = block.call
+
+        if block_results.is_a?(Array)
+          message, data = block_results
+          data ||= {}
+        else
+          message = block_results
+          data = {}
+        end
+      else
+        message = args[0]
+        data = args[1] || {}
+      end
 
       if not data.is_a?(Hash)
         raise ::ArgumentError.new("#{self.class.name}##{level}(message, " \
@@ -61,7 +75,7 @@ module Cabin::Mixins::Logger
                                   "a #{data.class.name}, I require a Hash.")
       end
 
-      log_with_level(level, message, data) if send(predicate)
+      log_with_level(level, message, data)
     end
 
     # def info?, def warn? ...
