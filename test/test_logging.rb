@@ -118,7 +118,7 @@ describe Cabin::Channel do
     level = level.to_sym
     test "block logging with data, '#{level}' logging when enabled" do
       @logger.level = level
-      @logger.send(level) { ["Hello world", {foo: 'bar'}] }
+      @logger.send(level) { ["Hello world", {:foo => 'bar'}] }
       event = @target.data[0]
       assert(@logger.send("#{level}?"),
              "At level #{level}, Channel##{level}? should return true.")
@@ -142,8 +142,8 @@ describe Cabin::Channel do
     level = level.to_sym
     test "block logging - doesn't execute block, '#{level}' logging when wrong level" do
       @logger.level = :fatal
-      # Should not log since log level is :fatal and we are above that.
-      @logger.send(level) { raise "I should not be evaluated"}
+      # Should not log or raise error since log level is :fatal and we are above that.
+      @logger.send(level) { raise 'I should not be evaluated' }
       assert_equal(0, @target.data.length)
     end
   end
