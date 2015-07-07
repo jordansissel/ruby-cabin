@@ -53,21 +53,10 @@ module Cabin::Mixins::Logger
       end
 
       return unless send(predicate)
+      return send(level, *block.call) if block
 
-      if block 
-        block_results = block.call
-
-        if block_results.is_a?(Array)
-          message, data = block_results
-          data ||= {}
-        else
-          message = block_results
-          data = {}
-        end
-      else
-        message = args[0]
-        data = args[1] || {}
-      end
+      message = args[0]
+      data = args[1] || {}
 
       if not data.is_a?(Hash)
         raise ::ArgumentError.new("#{self.class.name}##{level}(message, " \
