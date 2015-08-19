@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
   paths = %w{lib examples test LICENSE CHANGELIST}
   spec.name = "cabin"
-  spec.version = "0.7.1"
+  spec.version = "0.8.0"
   spec.summary = "Experiments in structured and contextual logging"
   spec.description = "This is an experiment to try and make logging more " \
     "flexible and more consumable. Plain text logs are bullshit, let's " \
@@ -11,7 +11,6 @@ Gem::Specification.new do |spec|
   spec.email = ["jls@semicomplete.com"]
   spec.homepage = "https://github.com/jordansissel/ruby-cabin"
 
-  #spec.add_dependency("json")
   spec.require_paths << "lib"
 
   spec.bindir = "bin"
@@ -27,5 +26,8 @@ Gem::Specification.new do |spec|
   end
 
   spec.files = files
+
+  spec.add_runtime_dependency 'json', '~> 1.8.3'
+
 end
 
