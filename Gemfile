@@ -1,7 +1,2 @@
-source :rubygems
-
-gem "json"
-gem "ffi-rzmq"
-gem "minitest"
-gem "simplecov", :require => false, :group => "test"
+source "https://rubygems.org"
 gemspec
