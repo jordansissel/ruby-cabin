@@ -11,21 +11,17 @@ Gem::Specification.new do |spec|
   spec.email = ["jls@semicomplete.com"]
   spec.homepage = "https://github.com/jordansissel/ruby-cabin"
 
-  #spec.add_dependency("json")
   spec.require_paths << "lib"
 
   spec.bindir = "bin"
   spec.executables << "rubygems-cabin-test"
 
-  files = []
-  paths.each do |path|
-    if File.file?(path)
-      files << path
-    else
-      files += Dir["#{path}/**/*"]
-    end
-  end
+  spec.files = Dir.glob(["cabin.gemspec", "LICENSE", "CHANGELIST",  "lib/**/*.rb", "examples/**/*.rb", "test/**/*.rb"])
 
-  spec.files = files
+  spec.add_development_dependency 'simplecov', '~> 0.10.0'
+  spec.add_development_dependency 'minitest', '~> 5.8.0'
+
+  spec.add_runtime_dependency 'ffi-rzmq', '~> 2.0.4'
+  spec.add_runtime_dependency 'json', '~> 1.8.3'
 end
 
