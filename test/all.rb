@@ -1,13 +1,8 @@
-$: << File.join(File.dirname(__FILE__), "..", "lib")
+require "test_helper"
 
-require "rubygems"
-require "minitest/autorun"
-require "simplecov"
+base_dir = File.join(File.expand_path(File.dirname(__FILE__)), "cabin")
 
-SimpleCov.start
-
-dir = File.dirname(File.expand_path(__FILE__))
-Dir.glob(File.join(dir, "**", "test_*.rb")).each do |path|
+Dir.glob(File.join(base_dir, "test_*.rb")).each do |path|
   puts "Loading tests from #{path}"
   if path =~ /test_zeromq/
     puts "Skipping zeromq tests because they force ruby to exit if libzmq is not found"

@@ -1,10 +1,5 @@
-$: << File.dirname(__FILE__)
-$: << File.join(File.dirname(__FILE__), "..", "lib")
-
-require "rubygems"
-require "minitest-patch"
+require "test_helper"
 require "cabin/outputs/zeromq"
-require "minitest/autorun" if __FILE__ == $0
 
 describe Cabin::Outputs::ZeroMQ do
 

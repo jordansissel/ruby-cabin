@@ -27,5 +27,8 @@ Gem::Specification.new do |spec|
   end
 
   spec.files = files
+
+  spec.add_development_dependency 'rake', '~> 10.4.2'
+
 end
 
