@@ -20,7 +20,7 @@ module RSpec
   end
 end
 
-require "rspec/cabin_helper"
+require "cabin/rspec/cabin_helper"
 require "minitest/autorun" if __FILE__ == $0
 
 describe "RSpec helper for Cabin" do
