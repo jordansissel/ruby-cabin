@@ -1,5 +1,5 @@
 Gem::Specification.new do |spec|
-  paths = %w{lib examples test LICENSE CHANGELIST}
+  paths = %w{lib examples rspec test LICENSE CHANGELIST}
   spec.name = "cabin"
   spec.version = "0.7.1"
   spec.summary = "Experiments in structured and contextual logging"
