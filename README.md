@@ -233,10 +233,12 @@ Usually in your code logging is a side effect, so in your test add expect(log_re
 Examples:
 ```ruby
 # no query, only message text
-expect(log_receiver).to receive_log_message("config LogStash::Outputs::Riemann/@port = 5555")
+expected_message = "config LogStash::Outputs::Riemann/@port = 5555"
+expect(log_receiver).to receive_log_message(expected_message)
 
 # query with match as a String
-expect(log_receiver).not_to receive_log_message("Unhandled exception", key: :method, match: "send_to_riemann")
+expect(log_receiver).not_to receive_log_message("Unhandled exception",
+  key: :method, match: "send_to_riemann")
 
 # query with match as a Regexp
 expect { output.receive(event) }.not_to receive_log_message("Unhandled exception",
