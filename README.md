@@ -168,7 +168,7 @@ Output in JSON format:
       logger.error("An error occurred", :exception => e, :backtrace => e.backtrace)
     end
 
-## RSpec Helper
+# RSpec Helper
 
 Defines a matcher, a subscriber to collect structured log entries and utility methods to use in your specs.
 
@@ -176,7 +176,7 @@ To use this helper, add this line to any spec file
 
     require 'cabin/rspec/cabin_helper'
 
-# Helper
+## Helper
 
 when you require the helper it will automatically stub Cabin::Channel.get to return a Channel subscribed to a special subscriber in a before(:example) block and unstub it in an after(:example) block
 
@@ -188,7 +188,7 @@ The following methods are available in Rspec ```it``` blocks
 | log_receiver        | returns the reference to the collection of log entries |
 
 
-# Matcher
+## Matcher
 
 The matcher is invoked thus
 ```ruby
