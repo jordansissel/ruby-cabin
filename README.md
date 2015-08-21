@@ -178,7 +178,7 @@ To use this helper, add this line to any spec file
 
 ## Helper
 
-when you require the helper it will automatically stub Cabin::Channel.get to return a Channel subscribed to a special subscriber in a before(:example) block and unstub it in an after(:example) block
+when you require the helper it will automatically stub ```Cabin::Channel.get``` to return a Channel subscribed to a special subscriber in a ```before(:example)``` block and unstub it in an ```after(:example)``` block
 
 The following methods are available in Rspec ```it``` blocks
 
@@ -200,7 +200,10 @@ Each log entry is a Ruby Hash with some keys e.g. timestamp, message, error, met
 
 Log Entry example
 ```ruby
-{:timestamp=>"2015-08-20T09:28:04.260000+0100", :message=>"config LogStash::Outputs::Riemann/@port = 5555", :level=>:debug, :file=>"logstash/config/mixin.rb", :line=>"112", :method=>"config_init"}
+{:timestamp=>"2015-08-20T09:28:04.260000+0100",
+  :message=>"config LogStash::Outputs::Riemann/@port = 5555",
+  :level=>:debug, :file=>"logstash/config/mixin.rb",
+  :line=>"112", :method=>"config_init"}
 ```
 
 NOTE: You can match on only the message OR the message and one other key/value.
@@ -218,6 +221,8 @@ query_hash examples:
   {:key => :level, :match => :info }
 ```
 
+| key   | value                     |
+|-------|---------------------------|
 | key   | can be a String or Symbol |
 | match | can be a String or Regexp |
 
@@ -234,7 +239,8 @@ expect(log_receiver).to receive_log_message("config LogStash::Outputs::Riemann/@
 expect(log_receiver).not_to receive_log_message("Unhandled exception", key: :method, match: "send_to_riemann")
 
 # query with match as a Regexp
-expect { output.receive(event) }.not_to receive_log_message("Unhandled exception", key: :error, match: %r|undefined method .compact. for ..Java..JavaUtil..ArrayList|)
+expect { output.receive(event) }.not_to receive_log_message("Unhandled exception",
+  key: :error, match: %r|undefined method .compact. for ..Java..JavaUtil..ArrayList|)
 ```
 
 To reduce the risk of false positives, use
