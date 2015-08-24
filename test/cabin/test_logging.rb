@@ -62,6 +62,19 @@ describe Cabin::Channel do
     assert_equal("Hello world", @target.data[0][:message])
   end 
 
+  test "subscribe with a level impacts log publishing" do
+    sub1 = Receiver.new
+    sub2 = Receiver.new
+    @logger.subscribe(sub1, :level => :info)
+    @logger.subscribe(sub2, :level => :error)
+    @logger.debug("test debug")
+    @logger.info("test info")
+    @logger.error("test error")
+
+    assert_equal("test info", sub1.data[0][:message])
+    assert_equal("test error", sub1.data[1][:message])
+    assert_equal("test error", sub2.data[0][:message])
+  end
   test "context values" do
     context = @logger.context
     context["foo"] = "hello"

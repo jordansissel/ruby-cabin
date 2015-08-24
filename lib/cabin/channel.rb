@@ -75,16 +75,33 @@ class Cabin::Channel
       end
     end # def Cabin::Channel.each
 
+    # Get a list of actions included in this class.
+    def actions
+      @actions ||= []
+    end # def Cabin::Channel.actions
+
+    # Register a new filter. The block is passed the event. It is expected to
+    # modify that event or otherwise do nothing.
+    def action(&block)
+      @actions ||= []
+      @actions << block
+    end
+
     # Get a list of filters included in this class.
     def filters
       @filters ||= []
     end # def Cabin::Channel.filters
-    
-    # Register a new filter. The block is passed the event. It is expected to
-    # modify that event or otherwise do nothing.
+
+    # Register a new filter. The block is passed the event and the subscription.
+    # It is expected to either return true or false
     def filter(&block)
       @filters ||= []
       @filters << block
+    end
+
+    # Decide to publish the event based on filters and subscription options
+    def filter_event?(event, subscription)
+      @filters.all? { |filter| filter.call(event, subscription) }
     end
   end # class << self
 
@@ -115,7 +132,7 @@ class Cabin::Channel
   #   foo << event
   #
   # Returns a subscription id you can use later to unsubscribe
-  def subscribe(output)
+  def subscribe(output, opts = {})
     # Wrap ruby stdlib Logger if given.
     if output.is_a?(::Logger)
       output = Cabin::Outputs::StdlibLogger.new(output)
@@ -123,7 +140,7 @@ class Cabin::Channel
       output = Cabin::Outputs::IO.new(output)
     end
     @subscriber_lock.synchronize do
-      @subscribers[output.object_id] = output
+      @subscribers[output.object_id] = [output, opts]
     end
     return output.object_id
   end # def subscribe
@@ -159,8 +176,9 @@ class Cabin::Channel
   # is a string ISO8601 timestamp with microsecond precision.
   def publish(data, &block)
     event = {}
-    self.class.filters.each do |filter|
-      filter.call(event)
+
+    self.class.actions.each do |action|
+      action.call(event)
     end
 
     if data.is_a?(String)
@@ -171,9 +189,12 @@ class Cabin::Channel
     event.merge!(@data) # Merge any logger context
 
     @subscriber_lock.synchronize do
-      @subscribers.each do |id, output|
-        append =  block_given? ? block.call(output, event) : true
-        output << event if append
+      @subscribers.each do |_, subscription|
+        output, options = subscription
+        append = block_given? ? block.call(output, event) : true
+        if append && self.class.filter_event?(event, subscription)
+          output << event
+        end
       end
     end
   end # def publish

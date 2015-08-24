@@ -3,6 +3,18 @@ require "cabin/namespace"
 # This module implements methods that act somewhat like Ruby's Logger class
 # It is included in Cabin::Channel
 module Cabin::Mixins::Logger
+
+  def self.included(klass)
+    klass.filter do |event, subscription|
+      if subscription.nil?
+        true
+      else
+        _output, options = subscription
+        LEVELS[(options[:level] || :debug)] >= LEVELS[event[:level]].to_i
+      end
+    end
+  end
+
   attr_accessor :level
   LEVELS = {
     :fatal => 0,

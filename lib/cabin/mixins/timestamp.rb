@@ -6,7 +6,7 @@ module Cabin::Mixins::Timestamp
     self.included(instance.class)
   end
   def self.included(klass)
-    klass.filter do |event|
+    klass.action do |event|
       event[:timestamp] = Time.now.strftime("%Y-%m-%dT%H:%M:%S.%6N%z")
     end
   end
