@@ -5,12 +5,11 @@ require "cabin/namespace"
 module Cabin::Mixins::Logger
 
   def self.included(klass)
-    klass.filter do |event, subscription|
+    klass.condition do |event, subscription|
       if subscription.nil?
         true
       else
-        _output, options = subscription
-        LEVELS[(options[:level] || :debug)] >= LEVELS[event[:level]].to_i
+        LEVELS[(subscription.options[:level] || :debug)] >= LEVELS[event[:level]].to_i
       end
     end
   end

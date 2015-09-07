@@ -7,6 +7,7 @@ require "cabin/namespace"
 require "cabin/context"
 require "cabin/outputs/stdlib-logger"
 require "cabin/outputs/io"
+require "cabin/subscriber"
 require "cabin/metrics"
 require "logger" # stdlib
 require "thread"
@@ -80,28 +81,26 @@ class Cabin::Channel
       @actions ||= []
     end # def Cabin::Channel.actions
 
-    # Register a new filter. The block is passed the event. It is expected to
+    # Register a new action. The block is passed the event. It is expected to
     # modify that event or otherwise do nothing.
     def action(&block)
-      @actions ||= []
-      @actions << block
+      actions << block
     end
 
-    # Get a list of filters included in this class.
-    def filters
-      @filters ||= []
-    end # def Cabin::Channel.filters
-
-    # Register a new filter. The block is passed the event and the subscription.
-    # It is expected to either return true or false
-    def filter(&block)
-      @filters ||= []
-      @filters << block
+    # Get a list of conditions included in this class.
+    def conditions
+      @conditions ||= []
     end
 
-    # Decide to publish the event based on filters and subscription options
-    def filter_event?(event, subscription)
-      @filters.all? { |filter| filter.call(event, subscription) }
+    # Register a new condition. The block must expect an event and a subscription.
+    # It is expected to either return true (allow the event) or false (reject it).
+    def condition(&block)
+      conditions << block
+    end
+
+    # Decide to publish the event based on conditions and subscription options
+    def allow_event?(event, subscription)
+      conditions.all? { |condition| condition.call(event, subscription) }
     end
   end # class << self
 
@@ -132,7 +131,7 @@ class Cabin::Channel
   #   foo << event
   #
   # Returns a subscription id you can use later to unsubscribe
-  def subscribe(output, opts = {})
+  def subscribe(output, options = {})
     # Wrap ruby stdlib Logger if given.
     if output.is_a?(::Logger)
       output = Cabin::Outputs::StdlibLogger.new(output)
@@ -140,7 +139,7 @@ class Cabin::Channel
       output = Cabin::Outputs::IO.new(output)
     end
     @subscriber_lock.synchronize do
-      @subscribers[output.object_id] = [output, opts]
+      @subscribers[output.object_id] = Cabin::Subscriber.new(output, options)
     end
     return output.object_id
   end # def subscribe
@@ -189,11 +188,10 @@ class Cabin::Channel
     event.merge!(@data) # Merge any logger context
 
     @subscriber_lock.synchronize do
-      @subscribers.each do |_, subscription|
-        output, options = subscription
-        append = block_given? ? block.call(output, event) : true
-        if append && self.class.filter_event?(event, subscription)
-          output << event
+      @subscribers.each do |_, subscriber|
+        append = block_given? ? block.call(subscriber, event) : true
+        if append && self.class.allow_event?(event, subscriber)
+          subscriber << event
         end
       end
     end
