@@ -1,7 +1,7 @@
 require "cabin/namespace"
 
 # An experiment to use AD&D-style log levels, because why not? 'info' and
-# 'fatal' and other log levels are pretty lame anyway.
+# 'fatal' and other log levels are silly anyway.
 #
 # Plus, now you can 'include Dragons' in your logger, which means it
 # has +2 against Knights and a special fire breathing attack..
