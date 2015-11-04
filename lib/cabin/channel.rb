@@ -7,6 +7,9 @@ require "cabin/namespace"
 require "cabin/context"
 require "cabin/outputs/stdlib-logger"
 require "cabin/outputs/io"
+require "cabin/formats/csv_format"
+require "cabin/formats/json_format"
+require "cabin/formats/null_format"
 require "cabin/metrics"
 require "logger" # stdlib
 require "thread"
@@ -108,6 +111,8 @@ class Cabin::Channel
     @metrics = Cabin::Metrics.new
     @metrics.channel = self
     @subscriber_lock = Mutex.new
+    @formatter_lock = Mutex.new
+    @formatter      = Cabin::Formatter::Null.new
   end # def initialize
 
   # Subscribe a new input
@@ -120,13 +125,26 @@ class Cabin::Channel
     if output.is_a?(::Logger)
       output = Cabin::Outputs::StdlibLogger.new(output)
     elsif output.is_a?(::IO)
-      output = Cabin::Outputs::IO.new(output)
+      output = Cabin::Outputs::IO.new(output, @formatter)
     end
     @subscriber_lock.synchronize do
       @subscribers[output.object_id] = output
     end
     return output.object_id
   end # def subscribe
+
+  # Add a new formatter for the output
+  # New events will me using this format option
+  def formatter(format)
+    @formatter_lock.synchronize do
+      @formatter = format
+    end
+    @subscriber_lock.synchronize do
+      @subscribers.each do |id, output|
+        output.formatter(@formatter) if output.respond_to?(:formatter)
+      end
+    end
+  end
 
   # Unsubscribe. Takes a 'subscription id' as returned by the subscribe method
   def unsubscribe(id)
@@ -190,5 +208,5 @@ class Cabin::Channel
     return data
   end # def dataify
 
-  public(:initialize, :context, :subscribe, :unsubscribe, :[]=, :[], :remove, :publish, :time, :context)
+  public(:initialize, :context, :subscribe, :unsubscribe, :formatter, :[]=, :[], :remove, :publish, :time, :context)
 end # class Cabin::Channel

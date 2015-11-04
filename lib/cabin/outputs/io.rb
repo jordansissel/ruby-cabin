@@ -40,16 +40,22 @@ class Cabin::Outputs::IO
     :debug => :cyan,
   }
 
-  def initialize(io)
+  def initialize(io, formatter)
     @io = io
     @lock = Mutex.new
+    @formatter = formatter
   end # def initialize
 
+  def formatter(formatter)
+    @lock.synchronize do
+      @formatter = formatter
+    end
+  end
   # Receive an event
   def <<(event)
     @lock.synchronize do
       if !tty?
-        @io.puts(event.inspect)
+        @io.puts(@formatter.convert(event))
         @io.flush
       else
         tty_write(event)
