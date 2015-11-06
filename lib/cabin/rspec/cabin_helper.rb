@@ -27,13 +27,16 @@ module CabinHelper
     end
 
     def matches?(actual)
-      if actual.is_a?(LoggingReceiver)
-        actual.filter(&method(:filter_block))
-      elsif actual.is_a?(Proc)
-        actual.call
-        @receiver.filter(&method(:filter_block))
-      else
-        @receiver.filter(&method(:filter_block))
+      filterable = actual.is_a?(LoggingReceiver) ? actual : @receiver
+      actual.call if actual.is_a?(Proc)
+      filterable.filter do |h|
+        result = if @compound
+            inter = @transform.call(h[@key])
+            !!(inter.send(@operator, @rhs))
+          else
+            true
+          end
+        result && h[:message].to_s == @message
       end
     end
 
@@ -65,16 +68,6 @@ module CabinHelper
       if @rhs.is_a?(Regexp)
         @operator = :=~
         @transform = ->(v){v.inspect}
-      end
-    end
-
-    def filter_block(h)
-      if @compound
-        inter = @transform.call(h[@key])
-        result = !!(inter.send(@operator, @rhs))
-        h[:message].to_s == @message && result
-      else
-        !!(h[:message].to_s == @message)
       end
     end
 

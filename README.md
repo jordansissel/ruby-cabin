@@ -212,7 +212,7 @@ Please add an Github Issue if you really need the message_txt to be a Regexp or 
 
 | arg          | description                                 |
 |--------------| --------------------------------------------|
-| messsage_txt | a String to match on the message key        |
+| message_txt  | a String to match on the message key        |
 | query_hash   | a Hash with keys ```key``` and ```match```  |
 
 query_hash examples:
