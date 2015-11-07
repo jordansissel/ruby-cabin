@@ -1,11 +1,5 @@
-$: << File.dirname(__FILE__)
-$: << File.join(File.dirname(__FILE__), "..", "lib")
-
-require "rubygems"
-require "minitest-patch"
-require "cabin"
+require "test_helper"
 require "cabin/metrics"
-require "minitest/autorun" if __FILE__ == $0
 
 describe Cabin::Metrics do
   before do

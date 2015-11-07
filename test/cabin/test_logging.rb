@@ -1,11 +1,4 @@
-$: << File.dirname(__FILE__)
-$: << File.join(File.dirname(__FILE__), "..", "lib")
-
-require "rubygems"
-require "minitest-patch"
-require "cabin"
-require "stringio"
-require "minitest/autorun" if __FILE__ == $0
+require "test_helper"
 
 describe Cabin::Channel do
 
