@@ -62,18 +62,18 @@ module CabinHelper
       return if !query_valid?
       @compound = true
       @operator = :==
-      @transform = ->(v){v}
+      @transform = lambda {|v| v}
       @key = @query[:key].to_sym
       @rhs = @query[:match]
       if @rhs.is_a?(Regexp)
         @operator = :=~
-        @transform = ->(v){v.inspect}
+        @transform = lambda {|v| v.inspect}
       end
     end
 
     def query_valid?
       @query.is_a?(Hash) &&
-        !@query.size.zero? &&
+        @query.any? &&
         @query.has_key?(:key) &&
         @query.has_key?(:match)
     end
