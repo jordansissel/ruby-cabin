@@ -1,24 +1,28 @@
 PATH
   remote: .
   specs:
-    cabin (0.4.4)
-      json
 
 GEM
   remote: http://rubygems.org/
   specs:
-    ffi (1.0.11)
-    ffi-rzmq (0.9.3)
-      ffi
-    json (1.6.5)
-    minitest (2.11.1)
-    multi_json (1.0.4)
-    simplecov (0.5.4)
-      multi_json (~> 1.0.3)
-      simplecov-html (~> 0.5.3)
-    simplecov-html (0.5.3)
+    docile (1.1.5)
+    ffi (1.9.10)
+    ffi (1.9.10-java)
+    ffi-rzmq (2.0.4)
+      ffi-rzmq-core (>= 1.0.1)
+    ffi-rzmq-core (1.0.4)
+      ffi (~> 1.9)
+    json (1.8.3)
+    json (1.8.3-java)
+    minitest (5.8.2)
+    simplecov (0.10.0)
+      docile (~> 1.1.0)
+      json (~> 1.8)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.0)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
@@ -27,3 +31,6 @@ DEPENDENCIES
   json
   minitest
   simplecov
+
+BUNDLED WITH
+   1.10.6

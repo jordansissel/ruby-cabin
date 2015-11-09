@@ -4,7 +4,7 @@ I want:
 
 ## Context and Structured Data
 
-because logging with printf makes it hard to read later. 
+because logging with printf makes it hard to read later.
 
 Why write code that's easy to maintain but not write logs that are the same?
 Structured data means you don't need crazy regular expression skills to make
@@ -118,7 +118,7 @@ How about this:
 
 And output in any structured data format, like json:
 
-    { 
+    {
       "timestamp": "2011-09-25T13:44:37.034Z",
       "message": "PAM: authentication error for illegal user",
       "hostname": "fbsd1",
@@ -167,3 +167,87 @@ Output in JSON format:
       metrics[:errors] += 1
       logger.error("An error occurred", :exception => e, :backtrace => e.backtrace)
     end
+
+# RSpec Helper
+
+Defines a matcher, a subscriber to collect structured log entries and utility methods to use in your specs.
+
+To use this helper, add this line to any spec file
+
+    require 'cabin/rspec/cabin_helper'
+
+## Helper
+
+when you require the helper it will automatically stub ```Cabin::Channel.get``` to return a Channel subscribed to a special subscriber in a ```before(:example)``` block and unstub it in an ```after(:example)``` block
+
+The following methods are available in Rspec ```it``` blocks
+
+| method              | description                                            |
+|---------------------| -------------------------------------------------------|
+| receive_log_message | the matcher method, invoked by RSpec                   |
+| log_receiver        | returns the reference to the collection of log entries |
+
+
+## Matcher
+
+The matcher is invoked thus
+```ruby
+  receive_log_message(message_txt, query_hash)
+```
+NOTE: query_hash is optional
+
+Each log entry is a Ruby Hash with some keys e.g. timestamp, message, error, method, file, line, level (and more)
+
+Log Entry example
+```ruby
+{:timestamp=>"2015-08-20T09:28:04.260000+0100",
+  :message=>"config LogStash::Outputs::Riemann/@port = 5555",
+  :level=>:debug, :file=>"logstash/config/mixin.rb",
+  :line=>"112", :method=>"config_init"}
+```
+
+NOTE: You can match on only the message OR the message and one other key/value.
+
+Please add an Github Issue if you really need the message_txt to be a Regexp or you must match on multiple other key/value pairs.
+
+| arg          | description                                 |
+|--------------| --------------------------------------------|
+| message_txt  | a String to match on the message key        |
+| query_hash   | a Hash with keys ```key``` and ```match```  |
+
+query_hash examples:
+```ruby
+  {:key => :line, :match => '112' }
+  {:key => :level, :match => :info }
+```
+
+| key   | value                     |
+|-------|---------------------------|
+| key   | can be a String or Symbol |
+| match | can be a String or Regexp |
+
+Use the Regexp for ```match``` if the value returned by ```key``` cannot be matched using ```==```
+
+Usually in your code logging is a side effect, so in your test add expect(log_receiver).to receive_log_message... after you run the method that might log something. However you can also use the expect { some_method }.to receive_log_message... block syntax.
+
+Examples:
+```ruby
+# no query, only message text
+expected_message = "config LogStash::Outputs::Riemann/@port = 5555"
+expect(log_receiver).to receive_log_message(expected_message)
+
+# query with match as a String
+expect(log_receiver).not_to receive_log_message("Unhandled exception",
+  key: :method, match: "send_to_riemann")
+
+# query with match as a Regexp
+expect { output.receive(event) }.not_to receive_log_message("Unhandled exception",
+  key: :error, match: %r|undefined method .compact. for ..Java..JavaUtil..ArrayList|)
+```
+
+To reduce the risk of false positives, use
+```ruby
+  puts log_receiver.cache.inspect
+```
+to see what entries are being logged while tuning the matcher args.  Especially if you are trying to verify that a log entry is *not* being created
+
