@@ -80,12 +80,14 @@ class Cabin::Channel
     def actions
       @actions ||= []
     end # def Cabin::Channel.actions
+    alias_method(:filters, :actions) # DEPRECATED
 
     # Register a new action. The block is passed the event. It is expected to
     # modify that event or otherwise do nothing.
     def action(&block)
       actions << block
     end
+    alias_method(:filter, :action) # DEPRECATED
 
     # Get a list of conditions included in this class.
     def conditions
