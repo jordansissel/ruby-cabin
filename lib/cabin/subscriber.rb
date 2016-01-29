@@ -1,5 +1,6 @@
 class Cabin::Subscriber
-  attr :output, :options
+  attr :output
+  attr :options
   def initialize(output, options = {})
     @output = output
     @options = options
