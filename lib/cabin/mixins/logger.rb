@@ -79,7 +79,7 @@ module Cabin::Mixins::Logger
     # these methods return true if the loglevel allows that level of log.
     define_method(predicate) do 
       @level ||= :info
-      return LEVELS[@level] >= LEVELS[level]
+      LEVELS[@level] >= LEVELS[level]
     end # def info?, def warn? ...
   end # end defining level-based log methods
 
