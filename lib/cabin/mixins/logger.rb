@@ -20,7 +20,8 @@ module Cabin::Mixins::Logger
     :error => 1,
     :warn => 2,
     :info => 3,
-    :debug => 4
+    :debug => 4,
+    :trace => 5
   }
 
   BACKTRACE_RE = /([^:]+):([0-9]+)(?::in `(.*)')?/
@@ -37,15 +38,14 @@ module Cabin::Mixins::Logger
   # Each level-based method accepts both a message and a hash data.
   #
   # This will define methods such as 'fatal' and 'fatal?' for each
-  # of: fatal, error, warn, info, debug
+  # of: fatal, error, warn, info, debug, trace
   #
   # The first method type (ie Cabin::Channel#fatal) is what logs, and it takes a
   # message and an optional Hash with context.
   #
   # The second method type (ie; Cabin::Channel#fatal?) returns true if
   # fatal logs are being emitted, false otherwise.
-  %w(fatal error warn info debug).each do |level|
-    level = level.to_sym
+  LEVELS.keys.each do |level|
     predicate = "#{level}?".to_sym
 
     # def info, def warn, etc...

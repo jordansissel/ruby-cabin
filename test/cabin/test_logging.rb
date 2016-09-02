@@ -67,6 +67,7 @@ describe Cabin::Channel do
     sub2 = Receiver.new
     @logger.subscribe(sub1, :level => :info)
     @logger.subscribe(sub2, :level => :error)
+    @logger.trace("test trace")
     @logger.debug("test debug")
     @logger.info("test info")
     @logger.error("test error")
@@ -75,6 +76,7 @@ describe Cabin::Channel do
     assert_equal("test error", sub1.data[1][:message])
     assert_equal("test error", sub2.data[0][:message])
   end
+
   test "context values" do
     context = @logger.context
     context["foo"] = "hello"
@@ -174,4 +176,5 @@ describe Cabin::Channel do
     assert_equal("Hello world", event[:message])
     assert_equal(:info, event[:level])
   end
+
 end # describe Cabin::Channel do
