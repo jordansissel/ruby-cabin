@@ -29,6 +29,8 @@ module Cabin::Mixins::Logger
   def level=(value)
     if value.respond_to?(:downcase)
       @level = value.downcase.to_sym
+    elsif value.is_a? Integer
+      @level = LEVELS.key(value)
     else
       @level = value.to_sym
     end
