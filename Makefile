@@ -4,7 +4,7 @@ DIRS=lib/ test/
 
 .PHONY: test
 test:
-	sh notify-failure.sh ruby -Ilib -Itest test/all.rb
+	bundle exec ruby -Ilib -Itest test/all.rb
 
 .PHONY: testloop
 testloop:
