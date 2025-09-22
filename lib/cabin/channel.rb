@@ -9,7 +9,6 @@ require "cabin/outputs/stdlib-logger"
 require "cabin/outputs/io"
 require "cabin/subscriber"
 require "cabin/metrics"
-require "logger" # stdlib
 require "thread"
 
 # A wonderful channel for logging.
@@ -135,7 +134,7 @@ class Cabin::Channel
   # Returns a subscription id you can use later to unsubscribe
   def subscribe(output, options = {})
     # Wrap ruby stdlib Logger if given.
-    if output.is_a?(::Logger)
+    if Kernel.const_defined?(:Logger) && output.is_a?(::Logger)
       output = Cabin::Outputs::StdlibLogger.new(output)
     elsif output.is_a?(::IO)
       output = Cabin::Outputs::IO.new(output)
