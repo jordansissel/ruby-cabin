@@ -1,5 +1,7 @@
-source :rubygems
+source "https://rubygems.org"
 
-gem "json"
-gem "minitest"
 gemspec
+
+group :development do
+  gem "minitest"
+end
