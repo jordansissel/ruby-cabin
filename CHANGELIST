@@ -1,4 +1,4 @@
-v0.8.2 (2025-09-22)
+v0.9.1, v0.8.2 (2025-09-22)
   - Make it so Ruby stops warning about the pending stdlib Logger -> gem change. (#52)
 
 v0.1.x .. v0.8.1 were not documented here.
